@@ -27,19 +27,24 @@ e.coefs <- e.coefs2
 
 
 
-setwd("C:/My_documents/ana/PathAnalysis/PathAnalysis")
-pdf(file="path.pdf", width=7, height = 8)
-par(mar=c(2,2,2,2))
-plot(myStudyArea.poly, xlim=c(-20,60), ylim=c(-25,60), border="white")
 
-axis(1)
 
-axis(2)
 
-cex.text <- 0.6
-cex.text1 <- 0.75
-offset.poly <- 2
-significant <- 0.05
+plot.path<- function(e.coefs
+                     ,cex.text =0.6
+                     ,cex.text1 = 0.75
+                     ,offset.poly = 2
+                     ,significant = 0.05
+                     ,xlim=c(-20,70)
+                     ,ylim=c(-30,60))
+{
+plot(myStudyArea.poly, xlim=c(-20,70), ylim=c(-30,60), border="white")
+
+#axis(1)
+
+#axis(2)
+
+
 
 # ==== I. DEFINE THE BASIC PATH STRUCTURE ==== 
 # ---- 1. Treatment/ PRESENCE ---- 
@@ -47,7 +52,7 @@ Treatment=cbind(c(-12,3,3,-12), c(16,16,23,23)) # 1st column X : bottomleft, bot
 polygon(Treatment[,1], Treatment[,2], col =  adjustcolor("orange",alpha.f = 0.5), border = "white")
 text(mean(Treatment[,1]),mean(Treatment[,2]), "TREATMENT", cex = cex.text1)
 
-Pres=cbind(c(47,65,65,47), c(16,16,23,23))
+Pres=cbind(c(51,69,69,51), c(16,16,23,23))
 polygon(Pres[,1], Pres[,2], col =  adjustcolor("blue",alpha.f = 0.5), border = "white")
 text(mean(Pres[,1]),mean(Pres[,2]), "PRESENCE", cex = cex.text1) 
 
@@ -186,35 +191,42 @@ text(mean(Irrig[,1]),mean(Irrig[,2]), "IRRIGATION", cex = cex.text)
 predictors <- c( rep("Treatment", 9),
                  "Diver", "Heter", "Height", "Cover", "Cover_dead",
                  "Diver", "Heter", "Height", "Cover", "Cover_dead",
-                 "tbl","par","Fallow","Irrig")
+                 "tbl","par","Fallow","Irrig",
+                 "SAI_sd", "LAI_sd", "biom")
 
 response <- c("Pres","SAI_sd","LAI_sd","biom","Diver","Heter","Height","Cover","Cover_dead",
               rep("Pres",5),
               rep("biom", 5),
-              rep("biom", 4))
+              rep("biom", 4),
+              rep("Pres",3))
 
 x0= c(Treatment[2,1], rep(mean(Treatment[c(1:2),1]),8),
       mean(Diver[c(2),1]), mean(Heter[c(2),1]), mean(Height[c(2),1]), mean(Cover[c(2),1]), mean(Cover_dead[c(2),1]),
       mean(Diver1[c(2),1]), mean(Heter1[c(2),1]), mean(Height1[c(2),1]), mean(Cover1[c(2),1]), mean(Cover_dead1[c(2),1]),
-      mean(tbl[c(1),1]), mean(par[c(1),1]), mean(Fallow[c(1),1]), mean(Irrig[c(1),1]))
+      mean(tbl[c(1),1]), mean(par[c(1),1]), mean(Fallow[c(1),1]), mean(Irrig[c(1),1]),
+      SAI_sd[3,1], LAI_sd[3,1], biom[3,1])
 
 x1= c(Pres[1,1], SAI_sd[1,1] , LAI_sd[1,1], biom[1,1], Diver[1,1], Heter[1,1], Height[1,1], Cover[1,1], Cover_dead[1,1],
       rep(mean(Pres[1:2,1]), 5),
       rep(mean(biom[1:2,1]), 5),
-      rep(mean(biom[2,1]), 4))
+      rep(mean(biom[2,1]), 4),
+      rep(Pres[1,1],3))
 
 y0= c(mean(Treatment[2:3,2]), mean(Treatment[1,2]),mean(Treatment[1,2]),mean(Treatment[1,2]),
       mean(Treatment[3,2]),mean(Treatment[3,2]),mean(Treatment[3,2]),mean(Treatment[3,2]),mean(Treatment[3,2]),
       mean(Diver[3:2,2]), mean(Heter[3:2,2]), mean(Height[3:2,2]), mean(Cover[3:2,2]), mean(Cover_dead[3:2,2]),
       mean(Diver1[3:2,2]), mean(Heter1[3:2,2]), mean(Height1[3:2,2]), mean(Cover1[3:2,2]), mean(Cover_dead1[3:2,2]),
-      mean(tbl[3:2,2]), mean(par[3:2,2]), mean(Fallow[3:2,2]), mean(Irrig[3:2,2]) 
+      mean(tbl[3:2,2]), mean(par[3:2,2]), mean(Fallow[3:2,2]), mean(Irrig[3:2,2]),
+      SAI_sd[3,2], LAI_sd[3,2], biom[3,2]
       )
 
 y1= c(mean(Pres[c(1,4),2]), mean(SAI_sd[c(1,4),2]) ,mean(LAI_sd[c(1,4),2]) ,mean(biom[c(1,4),2]) ,mean(Diver[c(1,4),2]),
       mean(Heter[c(1,4),2]), mean(Height[c(1,4),2]), mean(Cover[c(1,4),2]), mean(Cover_dead[c(1,4),2]),
       rep(mean(Pres[c(4),2]), 5),
       rep(mean(biom[c(1),2]), 5),
-      rep(mean(biom[c(2:3),2]), 4))
+      rep(mean(biom[c(2:3),2]), 4),
+      rep(Pres[1,2],3)
+      )
 
 
 
@@ -230,9 +242,89 @@ for(i in 1:length(x0)){
   }else{
     arrows(x0=x0[i], x1=x1[i], y0=y0[i], y1= y1[i],length = 0.1, lwd=1, col="grey" )
   }
-  
-  
 }
+
+
+    coeffs <- e.coefs[e.coefs$predictor== "Irrig" & e.coefs$response=="Pres"  ,]
+  if(coeffs$p.value>significant){
+  arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+         lwd=1, col="grey")
+  segments(x0=mean(Irrig[2,1]), x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Irrig[3:2,2]),
+           lwd=1, col="grey")
+  
+  }else{
+    arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+           lwd=2,
+           col=ifelse(coeffs$estimate>0, "red", "blue"))
+    segments(x0=mean(Irrig[2,1]), x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Irrig[3:2,2]),
+             lwd=2,
+             col=ifelse(coeffs$estimate>0, "red", "blue"))
+    text(mean(c(mean(Irrig[2,1]),mean(Pres[1:2,1])+6))  , mean(Irrig[3:2,2])+1.2, round(coeffs$estimate, digits = 1), cex=0.7)
+    
+  }
+    
+    
+    coeffs <- e.coefs[e.coefs$predictor== "Fallow" & e.coefs$response=="Pres"  ,]
+    if(coeffs$p.value>significant){
+      arrows(x0=mean(Pres[1:2,1])+4, x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+             lwd=1, col="grey")
+      segments(x0=mean(Fallow[2,1]), x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Fallow[3:2,2]),
+               lwd=1, col="grey")
+      
+    }else{
+      arrows(x0=mean(Pres[1:2,1])+4, x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+             lwd=2,
+             col=ifelse(coeffs$estimate>0, "red", "blue"))
+      segments(x0=mean(Fallow[2,1]), x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Fallow[3:2,2]),
+               lwd=2,
+               col=ifelse(coeffs$estimate>0, "red", "blue"))
+      text(mean(c(mean(Fallow[2,1]),mean(Pres[1:2,1])+4))  , mean(Fallow[3:2,2])+1.2, round(coeffs$estimate, digits = 1), cex=0.7)
+      
+    }  
+    
+  
+    coeffs <- e.coefs[e.coefs$predictor== "par" & e.coefs$response=="Pres"  ,]
+    if(coeffs$p.value>significant){
+      arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+             lwd=1, col="grey")
+      segments(x0=mean(par[2,1]), x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(par[3:2,2]),
+               lwd=1, col="grey")
+      
+    }else{
+      arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+             lwd=2,
+             col=ifelse(coeffs$estimate>0, "red", "blue"))
+      segments(x0=mean(par[2,1]), x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(par[3:2,2]),
+               lwd=2,
+               col=ifelse(coeffs$estimate>0, "red", "blue"))
+      text(mean(c(mean(par[2,1]),mean(Pres[1:2,1])+1))  , mean(par[3:2,2])+1.2, round(coeffs$estimate, digits = 1), cex=0.7)
+      
+    }  
+    
+    
+    coeffs <- e.coefs[e.coefs$predictor== "tbl" & e.coefs$response=="Pres"  ,]
+    if(coeffs$p.value>significant){
+      arrows(x0=mean(Pres[1:2,1])-1, x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+             lwd=1, col="grey")
+      segments(x0=mean(tbl[2,1]), x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(tbl[3:2,2]),
+               lwd=1, col="grey")
+      
+    }else{
+      arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+             lwd=2,
+             col=ifelse(coeffs$estimate>0, "red", "blue"))
+      segments(x0=mean(tbl[2,1]), x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(tbl[3:2,2]),
+               lwd=2,
+               col=ifelse(coeffs$estimate>0, "red", "blue"))
+      text(mean(c(mean(tbl[2,1]),mean(Pres[1:2,1])-1))  , mean(tbl[3:2,2])+1.2, round(coeffs$estimate, digits = 1), cex=0.7)
+      
+    }  
+    
+ 
+  
+  
+  
+
 
 # arrows(x0=Treatment[2,1], x1=Pres[1,1], y0=mean(Treatment[2:3,2]), y1= mean(Pres[c(1,4),2]),length = 0.1)
 # arrows(x0=mean(Treatment[c(1:2),1]), x1=SAI_sd[1,1], y0=mean(Treatment[1,2]), y1= mean(SAI_sd[c(1,4),2]),length = 0.1)
@@ -261,34 +353,33 @@ for(i in 1:length(x0)){
 # arrows(x0=mean(Cover_dead1[c(2),1]), x1=mean(biom[1:2,1]), y0=mean(Cover_dead1[3:2,2]), y1= mean(biom[c(1),2]),length = 0.1)
 # 
 
-
+#from vegetation 
+# arrows(x0=SAI_sd[3,1], x1=Pres[1,1], y0=SAI_sd[3,2], y1= Pres[1,2],length = 0.1)
+# arrows(x0=LAI_sd[3,1], x1=Pres[1,1], y0=LAI_sd[3,2], y1= Pres[1,2],length = 0.1)
+# arrows(x0=biom[3,1], x1=Pres[1,1], y0=biom[3,2], y1= Pres[1,2],length = 0.1)
+# 
 
 #from landscape
-arrows(x0=mean(tbl[c(1),1]), x1=mean(biom[2,1]), y0=mean(tbl[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
-arrows(x0=mean(par[c(1),1]), x1=mean(biom[2,1]), y0=mean(par[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
-arrows(x0=mean(Fallow[c(1),1]), x1=mean(biom[2,1]), y0=mean(Fallow[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
-arrows(x0=mean(Irrig[c(1),1]), x1=mean(biom[2,1]), y0=mean(Irrig[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
+# arrows(x0=mean(tbl[c(1),1]), x1=mean(biom[2,1]), y0=mean(tbl[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
+# arrows(x0=mean(par[c(1),1]), x1=mean(biom[2,1]), y0=mean(par[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
+# arrows(x0=mean(Fallow[c(1),1]), x1=mean(biom[2,1]), y0=mean(Fallow[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
+# arrows(x0=mean(Irrig[c(1),1]), x1=mean(biom[2,1]), y0=mean(Irrig[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
 
-
-arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Pres[c(2),2]),length = 0.1)
-segments(x0=mean(Irrig[2,1]), x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Irrig[3:2,2]))
-
-
-arrows(x0=mean(Pres[1:2,1])+4, x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Pres[c(2),2]),length = 0.1)
-segments(x0=mean(Fallow[2,1]), x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Fallow[3:2,2]))
-
-arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(Pres[c(2),2]),length = 0.1)
-segments(x0=mean(par[2,1]), x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(par[3:2,2]))
-
-arrows(x0=mean(Pres[1:2,1])-1, x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(Pres[c(2),2]),length = 0.1)
-segments(x0=mean(tbl[2,1]), x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(tbl[3:2,2]))
+}
 
 
 
-#from vegetation 
-arrows(x0=SAI_sd[3,1], x1=Pres[1,1], y0=SAI_sd[3,2], y1= Pres[1,2],length = 0.1)
-arrows(x0=LAI_sd[3,1], x1=Pres[1,1], y0=LAI_sd[3,2], y1= Pres[1,2],length = 0.1)
-arrows(x0=biom[3,1], x1=Pres[1,1], y0=biom[3,2], y1= Pres[1,2],length = 0.1)
+setwd("C:/My_documents/ana/PathAnalysis/PathAnalysis")
+pdf(file="path.pdf", width=7, height = 7)
+par(mar=c(2,2,2,2))
+
+plot.path(e.coefs
+          ,cex.text =0.6
+          ,cex.text1 = 0.75
+          ,offset.poly = 2
+          ,significant = 0.05
+          ,xlim=c(-20,70)
+          ,ylim=c(-30,60))
 
 
 dev.off()
