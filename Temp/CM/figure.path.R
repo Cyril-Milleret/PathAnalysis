@@ -36,25 +36,29 @@ plot.path<- function(e.coefs
                      ,offset.poly = 2
                      ,significant = 0.05
                      ,xlim=c(-20,70)
-                     ,ylim=c(-30,60))
+                     ,ylim=c(-30,60)
+                     ,col.pos="red"
+                     ,col.neg="blue"
+                     ,col.non.signifi="grey"
+                     ,Treatment.name="TREATMENT"
+                     ,Species.name="SPECIES")
 {
 plot(myStudyArea.poly, xlim=c(-20,70), ylim=c(-30,60), border="white")
 
 #axis(1)
-
 #axis(2)
 
 
 
 # ==== I. DEFINE THE BASIC PATH STRUCTURE ==== 
 # ---- 1. Treatment/ PRESENCE ---- 
-Treatment=cbind(c(-12,3,3,-12), c(16,16,23,23)) # 1st column X : bottomleft, bottom right, topright, topleft.# 2nd column Y
+Treatment=cbind(c(-20,-6,-6,-20), c(16,16,23,23)) # 1st column X : bottomleft, bottom right, topright, topleft.# 2nd column Y
 polygon(Treatment[,1], Treatment[,2], col =  adjustcolor("orange",alpha.f = 0.5), border = "white")
-text(mean(Treatment[,1]),mean(Treatment[,2]), "TREATMENT", cex = cex.text1)
+text(mean(Treatment[,1]),mean(Treatment[,2]), Treatment.name, cex = cex.text1)
 
 Pres=cbind(c(51,69,69,51), c(16,16,23,23))
 polygon(Pres[,1], Pres[,2], col =  adjustcolor("blue",alpha.f = 0.5), border = "white")
-text(mean(Pres[,1]),mean(Pres[,2]), "PRESENCE", cex = cex.text1) 
+text(mean(Pres[,1]),mean(Pres[,2]), Species.name, cex = cex.text1) 
 
 
 # ---- 2. FOOD ---- 
@@ -236,11 +240,11 @@ for(i in 1:length(x0)){
   coeffs <- e.coefs[e.coefs$predictor== predictors[i] & e.coefs$response== response[i] ,]
   
   if(coeffs$p.value < significant){
-    arrows(x0=x0[i], x1=x1[i], y0=y0[i], y1= y1[i],length = 0.1, lwd=2, col=ifelse(coeffs$estimate>0, "red", "blue") )
+    arrows(x0=x0[i], x1=x1[i], y0=y0[i], y1= y1[i],length = 0.1, lwd=2, col=ifelse(coeffs$estimate>0, col.pos, col.neg) )
     text(mean(c(x0[i], x1[i])) , mean(c(y0[i], y1[i])), round(coeffs$estimate, digits = 1), cex=0.7)
     
   }else{
-    arrows(x0=x0[i], x1=x1[i], y0=y0[i], y1= y1[i],length = 0.1, lwd=1, col="grey" )
+    arrows(x0=x0[i], x1=x1[i], y0=y0[i], y1= y1[i],length = 0.1, lwd=1, col=col.non.signifi )
   }
 }
 
@@ -248,17 +252,17 @@ for(i in 1:length(x0)){
     coeffs <- e.coefs[e.coefs$predictor== "Irrig" & e.coefs$response=="Pres"  ,]
   if(coeffs$p.value>significant){
   arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
-         lwd=1, col="grey")
+         lwd=1, col=col.non.signifi)
   segments(x0=mean(Irrig[2,1]), x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Irrig[3:2,2]),
-           lwd=1, col="grey")
+           lwd=1, col=col.non.signifi)
   
   }else{
     arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
            lwd=2,
-           col=ifelse(coeffs$estimate>0, "red", "blue"))
+           col=ifelse(coeffs$estimate>0, col.pos, col.neg))
     segments(x0=mean(Irrig[2,1]), x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Irrig[3:2,2]),
              lwd=2,
-             col=ifelse(coeffs$estimate>0, "red", "blue"))
+             col=ifelse(coeffs$estimate>0, col.pos, col.neg))
     text(mean(c(mean(Irrig[2,1]),mean(Pres[1:2,1])+6))  , mean(Irrig[3:2,2])+1.2, round(coeffs$estimate, digits = 1), cex=0.7)
     
   }
@@ -267,17 +271,17 @@ for(i in 1:length(x0)){
     coeffs <- e.coefs[e.coefs$predictor== "Fallow" & e.coefs$response=="Pres"  ,]
     if(coeffs$p.value>significant){
       arrows(x0=mean(Pres[1:2,1])+4, x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
-             lwd=1, col="grey")
+             lwd=1, col=col.non.signifi)
       segments(x0=mean(Fallow[2,1]), x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Fallow[3:2,2]),
-               lwd=1, col="grey")
+               lwd=1, col=col.non.signifi)
       
     }else{
       arrows(x0=mean(Pres[1:2,1])+4, x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
              lwd=2,
-             col=ifelse(coeffs$estimate>0, "red", "blue"))
+             col=ifelse(coeffs$estimate>0, col.pos, col.neg))
       segments(x0=mean(Fallow[2,1]), x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Fallow[3:2,2]),
                lwd=2,
-               col=ifelse(coeffs$estimate>0, "red", "blue"))
+               col=ifelse(coeffs$estimate>0, col.pos, col.neg))
       text(mean(c(mean(Fallow[2,1]),mean(Pres[1:2,1])+4))  , mean(Fallow[3:2,2])+1.2, round(coeffs$estimate, digits = 1), cex=0.7)
       
     }  
@@ -286,17 +290,17 @@ for(i in 1:length(x0)){
     coeffs <- e.coefs[e.coefs$predictor== "par" & e.coefs$response=="Pres"  ,]
     if(coeffs$p.value>significant){
       arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
-             lwd=1, col="grey")
+             lwd=1, col=col.non.signifi)
       segments(x0=mean(par[2,1]), x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(par[3:2,2]),
-               lwd=1, col="grey")
+               lwd=1, col=col.non.signifi)
       
     }else{
       arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
              lwd=2,
-             col=ifelse(coeffs$estimate>0, "red", "blue"))
+             col=ifelse(coeffs$estimate>0, col.pos, col.neg))
       segments(x0=mean(par[2,1]), x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(par[3:2,2]),
                lwd=2,
-               col=ifelse(coeffs$estimate>0, "red", "blue"))
+               col=ifelse(coeffs$estimate>0, col.pos, col.neg))
       text(mean(c(mean(par[2,1]),mean(Pres[1:2,1])+1))  , mean(par[3:2,2])+1.2, round(coeffs$estimate, digits = 1), cex=0.7)
       
     }  
@@ -305,17 +309,17 @@ for(i in 1:length(x0)){
     coeffs <- e.coefs[e.coefs$predictor== "tbl" & e.coefs$response=="Pres"  ,]
     if(coeffs$p.value>significant){
       arrows(x0=mean(Pres[1:2,1])-1, x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
-             lwd=1, col="grey")
+             lwd=1, col=col.non.signifi)
       segments(x0=mean(tbl[2,1]), x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(tbl[3:2,2]),
-               lwd=1, col="grey")
+               lwd=1, col=col.non.signifi)
       
     }else{
       arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
              lwd=2,
-             col=ifelse(coeffs$estimate>0, "red", "blue"))
+             col=ifelse(coeffs$estimate>0, col.pos, col.neg))
       segments(x0=mean(tbl[2,1]), x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(tbl[3:2,2]),
                lwd=2,
-               col=ifelse(coeffs$estimate>0, "red", "blue"))
+               col=ifelse(coeffs$estimate>0, col.pos, col.neg))
       text(mean(c(mean(tbl[2,1]),mean(Pres[1:2,1])-1))  , mean(tbl[3:2,2])+1.2, round(coeffs$estimate, digits = 1), cex=0.7)
       
     }  
@@ -379,7 +383,12 @@ plot.path(e.coefs
           ,offset.poly = 2
           ,significant = 0.05
           ,xlim=c(-20,70)
-          ,ylim=c(-30,60))
+          ,ylim=c(-30,60)
+          ,col.pos="blue"
+          ,col.neg="red"
+          ,col.non.signifi="grey"
+          ,Treatment.name= "CYRIL"
+          ,Species.name="PRESENCE \n cyril")
 
 
 dev.off()
