@@ -7,9 +7,9 @@ library(plotrix)
 grid.size.max <- 40
 grid.size.min <- 0
 coords <- matrix(c(grid.size.min         , grid.size.min ,
-                   grid.size , grid.size.min ,
-                   grid.size , grid.size ,
-                   grid.size.min          , grid.size,
+                   grid.size.max , grid.size.min ,
+                   grid.size.max , grid.size.max ,
+                   grid.size.min          , grid.size.max,
                    grid.size.min          , grid.size.min
 ), ncol = 2, byrow = TRUE)
 
@@ -18,10 +18,20 @@ myStudyArea.poly <-  SpatialPolygons(list(Polygons(list(P1), ID = "a")),
                                      proj4string=CRS("+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0"))
 
 
+### LOAD THE DATA 
+setwd("C:/My_documents/ana/PathAnalysis")
 
-pdf(file="path.pdf", width=7, height = 7)
+load("ecoef.RData")
+
+e.coefs <- e.coefs2
+
+
+
+setwd("C:/My_documents/ana/PathAnalysis/PathAnalysis")
+pdf(file="path.pdf", width=7, height = 8)
 par(mar=c(2,2,2,2))
 plot(myStudyArea.poly, xlim=c(-20,60), ylim=c(-25,60), border="white")
+
 axis(1)
 
 axis(2)
@@ -29,20 +39,20 @@ axis(2)
 cex.text <- 0.6
 cex.text1 <- 0.75
 offset.poly <- 2
+significant <- 0.05
 
-
-TREATMENT=cbind(c(-12,3,3,-12), c(16,16,23,23)) # 1st column X : bottomleft, bottom right, topright, topleft.# 2nd column Y
-polygon(TREATMENT[,1], TREATMENT[,2], col =  adjustcolor("orange",alpha.f = 0.5), border = "white")
-text(mean(TREATMENT[,1]),mean(TREATMENT[,2]), "TREATMENT", cex = cex.text1)
+# ==== I. DEFINE THE BASIC PATH STRUCTURE ==== 
+# ---- 1. Treatment/ PRESENCE ---- 
+Treatment=cbind(c(-12,3,3,-12), c(16,16,23,23)) # 1st column X : bottomleft, bottom right, topright, topleft.# 2nd column Y
+polygon(Treatment[,1], Treatment[,2], col =  adjustcolor("orange",alpha.f = 0.5), border = "white")
+text(mean(Treatment[,1]),mean(Treatment[,2]), "TREATMENT", cex = cex.text1)
 
 Pres=cbind(c(47,65,65,47), c(16,16,23,23))
 polygon(Pres[,1], Pres[,2], col =  adjustcolor("blue",alpha.f = 0.5), border = "white")
 text(mean(Pres[,1]),mean(Pres[,2]), "PRESENCE", cex = cex.text1) 
 
 
-### FOOD 
-
-
+# ---- 2. FOOD ---- 
 SAI_sd=cbind(c(9,25,25,9), c(8,8,12,12))
 LAI_sd=cbind(c(9,25,25,9), c(2,2,6,6))
 biom=cbind(c(9,25,25,9), c(-4,-4,0,0))
@@ -68,16 +78,12 @@ text(mean(LAI_sd[,1]),mean(LAI_sd[,2]), "LAI", cex = cex.text)
 polygon(biom[,1], biom[,2], col =  adjustcolor("purple",alpha.f = 0.5), border = "white")
 text(mean(biom[,1]),mean(biom[,2]), "ORTHOPTERA", cex = cex.text)
 
-
-
-
-## VEGETATION 
+# ---- 3. VEGETATION  ---- 
 Diver=cbind(c(9,25,25,9), c(28,28,32,32))
 Heter=cbind(c(9,25,25,9), c(34,34,38,38))
 Height=cbind(c(9,25,25,9), c(40,40,44,44))
 Cover=cbind(c(9,25,25,9), c(46,46,50,50))
 Cover_dead=cbind(c(9,25,25,9), c(52,52,56,56))
-
 
 veg= rbind(Diver,Heter,Height,Cover,Cover_dead)
 min1 <- min(veg[,1])-offset.poly
@@ -106,7 +112,42 @@ text(mean(Cover[,1]),mean(Cover[,2]), "COVER", cex = cex.text)
 polygon(Cover_dead[,1], Cover_dead[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
 text(mean(Cover_dead[,1]),mean(Cover_dead[,2]), "COVER_DEAD", cex = cex.text)
 
-##LANDSCAPE ##
+# ---- 4. VEGETATION  2 ---- 
+Diver1=cbind(c(-18,2,2,-18), c(-32,-32,-28,-28))
+Heter1=cbind(c(-18,2,2,-18), c(-26,-26,-22,-22))
+Height1=cbind(c(-18,2,2,-18), c(-20,-20,-16,-16))
+Cover1=cbind(c(-18,2,2,-18), c(-14,-14,-10,-10))
+Cover_dead1=cbind(c(-18,2,2,-18), c(-8,-8,-4,-4))
+
+veg1= rbind(Diver1,Heter1,Height1,Cover1,Cover_dead1)
+min1 <- min(veg1[,1])-offset.poly
+min2 <- min(veg1[,2])-offset.poly
+max1 <- max(veg1[,1])+offset.poly
+max2 <- max(veg1[,2])+offset.poly
+
+
+polygon(c(min1,max1,max1,min1) ,
+        c(min2,min2,max2,max2)  ,
+        col =  adjustcolor("green",alpha.f = 0.1), border = "white")
+
+
+polygon(Diver1[,1], Diver1[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
+text(mean(Diver1[,1]),mean(Diver1[,2]), "DIVERSITY", cex = cex.text)
+
+polygon(Heter1[,1], Heter1[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
+text(mean(Heter1[,1]),mean(Heter1[,2]), "HETEROGENEITY", cex = cex.text)
+
+polygon(Height1[,1], Height1[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
+text(mean(Height1[,1]),mean(Height1[,2]), "HEIGHT", cex = cex.text)
+
+polygon(Cover1[,1], Cover1[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
+text(mean(Cover1[,1]),mean(Cover1[,2]), "COVER", cex = cex.text)
+
+polygon(Cover_dead1[,1], Cover_dead1[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
+text(mean(Cover_dead1[,1]),mean(Cover_dead1[,2]), "COVER_DEAD", cex = cex.text)
+
+
+# ---- 5. LANDSCAPE  ---- 
 tbl=cbind(c(40,54,54,40), c(-4,-4,0,0))
 par=cbind(c(40,54,54,40), c(-10,-10,-6,-6))
 Fallow=cbind(c(40,54,54,40), c(-16,-16,-12,-12))
@@ -139,24 +180,88 @@ polygon(Irrig[,1], Irrig[,2], col =  adjustcolor("brown",alpha.f = 0.5), border 
 text(mean(Irrig[,1]),mean(Irrig[,2]), "IRRIGATION", cex = cex.text)
 
 
+# ==== II. ADD THE ARROW ==== 
+#FROM Treatment 
 
-#FROM TREATMENT 
-arrows(x0=TREATMENT[2,1], x1=Pres[1,1], y0=mean(TREATMENT[2:3,2]), y1= mean(Pres[c(1,4),2]),length = 0.1)
-arrows(x0=mean(TREATMENT[c(1:2),1]), x1=SAI_sd[1,1], y0=mean(TREATMENT[1,2]), y1= mean(SAI_sd[c(1,4),2]),length = 0.1)
-arrows(x0=mean(TREATMENT[c(1:2),1]), x1=LAI_sd[1,1], y0=mean(TREATMENT[1,2]), y1= mean(LAI_sd[c(1,4),2]),length = 0.1)
-arrows(x0=mean(TREATMENT[c(1:2),1]), x1=biom[1,1], y0=mean(TREATMENT[1,2]), y1= mean(biom[c(1,4),2]),length = 0.1)
-arrows(x0=mean(TREATMENT[c(1:2),1]), x1=Diver[1,1], y0=mean(TREATMENT[3,2]), y1= mean(Diver[c(1,4),2]),length = 0.1)
-arrows(x0=mean(TREATMENT[c(1:2),1]), x1=Heter[1,1], y0=mean(TREATMENT[3,2]), y1= mean(Heter[c(1,4),2]),length = 0.1)
-arrows(x0=mean(TREATMENT[c(1:2),1]), x1=Height[1,1], y0=mean(TREATMENT[3,2]), y1= mean(Height[c(1,4),2]),length = 0.1)
-arrows(x0=mean(TREATMENT[c(1:2),1]), x1=Cover[1,1], y0=mean(TREATMENT[3,2]), y1= mean(Cover[c(1,4),2]),length = 0.1)
-arrows(x0=mean(TREATMENT[c(1:2),1]), x1=Cover_dead[1,1], y0=mean(TREATMENT[3,2]), y1= mean(Cover_dead[c(1,4),2]),length = 0.1)
+predictors <- c( rep("Treatment", 9),
+                 "Diver", "Heter", "Height", "Cover", "Cover_dead",
+                 "Diver", "Heter", "Height", "Cover", "Cover_dead",
+                 "tbl","par","Fallow","Irrig")
+
+response <- c("Pres","SAI_sd","LAI_sd","biom","Diver","Heter","Height","Cover","Cover_dead",
+              rep("Pres",5),
+              rep("biom", 5),
+              rep("biom", 4))
+
+x0= c(Treatment[2,1], rep(mean(Treatment[c(1:2),1]),8),
+      mean(Diver[c(2),1]), mean(Heter[c(2),1]), mean(Height[c(2),1]), mean(Cover[c(2),1]), mean(Cover_dead[c(2),1]),
+      mean(Diver1[c(2),1]), mean(Heter1[c(2),1]), mean(Height1[c(2),1]), mean(Cover1[c(2),1]), mean(Cover_dead1[c(2),1]),
+      mean(tbl[c(1),1]), mean(par[c(1),1]), mean(Fallow[c(1),1]), mean(Irrig[c(1),1]))
+
+x1= c(Pres[1,1], SAI_sd[1,1] , LAI_sd[1,1], biom[1,1], Diver[1,1], Heter[1,1], Height[1,1], Cover[1,1], Cover_dead[1,1],
+      rep(mean(Pres[1:2,1]), 5),
+      rep(mean(biom[1:2,1]), 5),
+      rep(mean(biom[2,1]), 4))
+
+y0= c(mean(Treatment[2:3,2]), mean(Treatment[1,2]),mean(Treatment[1,2]),mean(Treatment[1,2]),
+      mean(Treatment[3,2]),mean(Treatment[3,2]),mean(Treatment[3,2]),mean(Treatment[3,2]),mean(Treatment[3,2]),
+      mean(Diver[3:2,2]), mean(Heter[3:2,2]), mean(Height[3:2,2]), mean(Cover[3:2,2]), mean(Cover_dead[3:2,2]),
+      mean(Diver1[3:2,2]), mean(Heter1[3:2,2]), mean(Height1[3:2,2]), mean(Cover1[3:2,2]), mean(Cover_dead1[3:2,2]),
+      mean(tbl[3:2,2]), mean(par[3:2,2]), mean(Fallow[3:2,2]), mean(Irrig[3:2,2]) 
+      )
+
+y1= c(mean(Pres[c(1,4),2]), mean(SAI_sd[c(1,4),2]) ,mean(LAI_sd[c(1,4),2]) ,mean(biom[c(1,4),2]) ,mean(Diver[c(1,4),2]),
+      mean(Heter[c(1,4),2]), mean(Height[c(1,4),2]), mean(Cover[c(1,4),2]), mean(Cover_dead[c(1,4),2]),
+      rep(mean(Pres[c(4),2]), 5),
+      rep(mean(biom[c(1),2]), 5),
+      rep(mean(biom[c(2:3),2]), 4))
+
+
+
+for(i in 1:length(x0)){
+  #for(i in 1:8){
+    
+  coeffs <- e.coefs[e.coefs$predictor== predictors[i] & e.coefs$response== response[i] ,]
+  
+  if(coeffs$p.value < significant){
+    arrows(x0=x0[i], x1=x1[i], y0=y0[i], y1= y1[i],length = 0.1, lwd=2, col=ifelse(coeffs$estimate>0, "red", "blue") )
+    text(mean(c(x0[i], x1[i])) , mean(c(y0[i], y1[i])), round(coeffs$estimate, digits = 1), cex=0.7)
+    
+  }else{
+    arrows(x0=x0[i], x1=x1[i], y0=y0[i], y1= y1[i],length = 0.1, lwd=1, col="grey" )
+  }
+  
+  
+}
+
+# arrows(x0=Treatment[2,1], x1=Pres[1,1], y0=mean(Treatment[2:3,2]), y1= mean(Pres[c(1,4),2]),length = 0.1)
+# arrows(x0=mean(Treatment[c(1:2),1]), x1=SAI_sd[1,1], y0=mean(Treatment[1,2]), y1= mean(SAI_sd[c(1,4),2]),length = 0.1)
+# arrows(x0=mean(Treatment[c(1:2),1]), x1=LAI_sd[1,1], y0=mean(Treatment[1,2]), y1= mean(LAI_sd[c(1,4),2]),length = 0.1)
+# arrows(x0=mean(Treatment[c(1:2),1]), x1=biom[1,1], y0=mean(Treatment[1,2]), y1= mean(biom[c(1,4),2]),length = 0.1)
+# arrows(x0=mean(Treatment[c(1:2),1]), x1=Diver[1,1], y0=mean(Treatment[3,2]), y1= mean(Diver[c(1,4),2]),length = 0.1)
+# arrows(x0=mean(Treatment[c(1:2),1]), x1=Heter[1,1], y0=mean(Treatment[3,2]), y1= mean(Heter[c(1,4),2]),length = 0.1)
+# arrows(x0=mean(Treatment[c(1:2),1]), x1=Height[1,1], y0=mean(Treatment[3,2]), y1= mean(Height[c(1,4),2]),length = 0.1)
+# arrows(x0=mean(Treatment[c(1:2),1]), x1=Cover[1,1], y0=mean(Treatment[3,2]), y1= mean(Cover[c(1,4),2]),length = 0.1)
+# arrows(x0=mean(Treatment[c(1:2),1]), x1=Cover_dead[1,1], y0=mean(Treatment[3,2]), y1= mean(Cover_dead[c(1,4),2]),length = 0.1)
 
 #from vegetation 
-arrows(x0=mean(Diver[c(2),1]), x1=mean(Pres[1:2,1]), y0=mean(Diver[3:2,2]), y1= mean(Pres[c(4),2]),length = 0.1)
-arrows(x0=mean(Heter[c(2),1]), x1=mean(Pres[1:2,1]), y0=mean(Heter[3:2,2]), y1= mean(Pres[c(4),2]),length = 0.1)
-arrows(x0=mean(Height[c(2),1]), x1=mean(Pres[1:2,1]), y0=mean(Height[3:2,2]), y1= mean(Pres[c(4),2]),length = 0.1)
-arrows(x0=mean(Cover[c(2),1]), x1=mean(Pres[1:2,1]), y0=mean(Cover[3:2,2]), y1= mean(Pres[c(4),2]),length = 0.1)
-arrows(x0=mean(Cover_dead[c(2),1]), x1=mean(Pres[1:2,1]), y0=mean(Cover_dead[3:2,2]), y1= mean(Pres[c(4),2]),length = 0.1)
+# arrows(x0=mean(Diver[c(2),1]), x1=mean(Pres[1:2,1]), y0=mean(Diver[3:2,2]), y1= mean(Pres[c(4),2]),length = 0.1)
+# arrows(x0=mean(Heter[c(2),1]), x1=mean(Pres[1:2,1]), y0=mean(Heter[3:2,2]), y1= mean(Pres[c(4),2]),length = 0.1)
+# arrows(x0=mean(Height[c(2),1]), x1=mean(Pres[1:2,1]), y0=mean(Height[3:2,2]), y1= mean(Pres[c(4),2]),length = 0.1)
+# arrows(x0=mean(Cover[c(2),1]), x1=mean(Pres[1:2,1]), y0=mean(Cover[3:2,2]), y1= mean(Pres[c(4),2]),length = 0.1)
+# arrows(x0=mean(Cover_dead[c(2),1]), x1=mean(Pres[1:2,1]), y0=mean(Cover_dead[3:2,2]), y1= mean(Pres[c(4),2]),length = 0.1)
+
+
+
+#from vegetation2
+# arrows(x0=mean(Diver1[c(2),1]), x1=mean(biom[1:2,1]), y0=mean(Diver1[3:2,2]), y1= mean(biom[c(1),2]),length = 0.1)
+# arrows(x0=mean(Heter1[c(2),1]), x1=mean(biom[1:2,1]), y0=mean(Heter1[3:2,2]), y1= mean(biom[c(1),2]),length = 0.1)
+# arrows(x0=mean(Height1[c(2),1]), x1=mean(biom[1:2,1]), y0=mean(Height1[3:2,2]), y1= mean(biom[c(1),2]),length = 0.1)
+# arrows(x0=mean(Cover1[c(2),1]), x1=mean(biom[1:2,1]), y0=mean(Cover1[3:2,2]), y1= mean(biom[c(1),2]),length = 0.1)
+# arrows(x0=mean(Cover_dead1[c(2),1]), x1=mean(biom[1:2,1]), y0=mean(Cover_dead1[3:2,2]), y1= mean(biom[c(1),2]),length = 0.1)
+# 
+
+
 
 #from landscape
 arrows(x0=mean(tbl[c(1),1]), x1=mean(biom[2,1]), y0=mean(tbl[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
