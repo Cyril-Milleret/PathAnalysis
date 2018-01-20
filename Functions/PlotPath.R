@@ -1,32 +1,32 @@
 PlotPath <- function(e.coefs
                      ,
-                     cex.text =0.6
+                     cex.text = 0.6              # text of the of predictors e.g cover SAI, TBL...
                      ,
-                     cex.text1 = 0.75
+                     cex.text1 = 0.75            # cex of the treatment and presence
                      ,
-                     offset.poly = 2
+                     offset.poly = 2             # offset of the background light box for VEGETATION FOOD LANSCAPE 
                      ,
-                     significant = 0.05
+                     significant = 0.05          # significant value when arrows should be plotted 
                      ,
-                     xlim=c(-20,70)
+                     xlim=c(-20,70)              # xlim values for the window 
                      ,
-                     ylim=c(-30,60)
+                     ylim=c(-30,60)              # ylim values for the window 
                      ,
-                     cex.category = 0.6
+                     cex.category = 0.6          # Cex for the category (VEGETATION)
                      ,
-                     col.pos="red"
+                     col.pos="red"               # color of positive arrows 
                      ,
-                     col.neg="blue"
+                     col.neg="blue"              # color of negative arrows 
                      ,
-                     col.non.signifi="grey"
+                     col.non.signifi="grey"      # color of non-significant arrows 
                      ,
-                     Treatment.name="TREATMENT"
+                     Treatment.name="TREATMENT"  # Name of the TREATMENT 
                      ,
-                     Species.name="SPECIES"
+                     Species.name="SPECIES"      # SPECIES name 
                      , 
-                     plot.axis=FALSE
+                     plot.axis=FALSE             # if axis should be plotted (for developping)
                      ,
-                     text.box.width=c(3, 3) ## first element on the x axis and second on the y axis 
+                     estimate.box.width=c(3,3)   # width of the white box behind estimates values : first element :x axis and second : on the y axis 
 )
 {
 require(sp)  
