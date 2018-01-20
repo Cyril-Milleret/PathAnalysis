@@ -283,7 +283,7 @@ require(sp)
     segments(x0=mean(Irrig[2,1]), x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Irrig[3:2,2]),
              lwd=2,
              col=ifelse(coeffs$estimate>0, col.pos, col.neg))
-    text(mean(c(mean(Irrig[2,1]),mean(Pres[1:2,1])+6))  , mean(Irrig[3:2,2])+1.2, round(coeffs$estimate, digits = 1), cex=0.7)
+    text(mean(c(mean(Irrig[2,1]),mean(Pres[1:2,1])+6))  , mean(Irrig[3:2,2])+1.2, round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate)
     
   }
   
@@ -302,7 +302,7 @@ require(sp)
     segments(x0=mean(Fallow[2,1]), x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Fallow[3:2,2]),
              lwd=2,
              col=ifelse(coeffs$estimate>0, col.pos, col.neg))
-    text(mean(c(mean(Fallow[2,1]),mean(Pres[1:2,1])+4))  , mean(Fallow[3:2,2])+1.2, round(coeffs$estimate, digits = 1), cex=0.7)
+    text(mean(c(mean(Fallow[2,1]),mean(Pres[1:2,1])+4))  , mean(Fallow[3:2,2])+1.2, round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate)
     
   }  
   
@@ -321,7 +321,7 @@ require(sp)
     segments(x0=mean(par[2,1]), x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(par[3:2,2]),
              lwd=2,
              col=ifelse(coeffs$estimate>0, col.pos, col.neg))
-    text(mean(c(mean(par[2,1]),mean(Pres[1:2,1])+1))  , mean(par[3:2,2])+1.2, round(coeffs$estimate, digits = 1), cex=0.7)
+    text(mean(c(mean(par[2,1]),mean(Pres[1:2,1])+1))  , mean(par[3:2,2])+1.2, round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate)
     
   }  
   
@@ -340,7 +340,7 @@ require(sp)
     segments(x0=mean(tbl[2,1]), x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(tbl[3:2,2]),
              lwd=2,
              col=ifelse(coeffs$estimate>0, col.pos, col.neg))
-    text(mean(c(mean(tbl[2,1]),mean(Pres[1:2,1])-1))  , mean(tbl[3:2,2])+1.2, round(coeffs$estimate, digits = 1), cex=0.7)
+    text(mean(c(mean(tbl[2,1]),mean(Pres[1:2,1])-1))  , mean(tbl[3:2,2])+1.2, round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate)
     
   }  
   
