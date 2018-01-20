@@ -254,8 +254,8 @@ require(sp)
     
     if(coeffs$p.value < significant){
       arrows(x0=x0[i], x1=x1[i], y0=y0[i], y1= y1[i],length = 0.1, lwd=2, col=ifelse(coeffs$estimate>0, col.pos, col.neg) )
-      polygon(c( mean(c(x0[i], x1[i]))-text.box.width[1], mean(c(x0[i], x1[i]))+text.box.width[1], mean(c(x0[i], x1[i]))+text.box.width[1] ,mean(c(x0[i], x1[i]))-text.box.width[1] ),
-              c( mean(c(y0[i], y1[i]))-text.box.width[2], mean(c(y0[i], y1[i]))-text.box.width[2], mean(c(y0[i], y1[i]))+text.box.width[2], mean(c(y0[i], y1[i]))+text.box.width[2])
+      polygon(c( mean(c(x0[i], x1[i]))-estimate.box.width[1], mean(c(x0[i], x1[i]))+estimate.box.width[1], mean(c(x0[i], x1[i]))+estimate.box.width[1] ,mean(c(x0[i], x1[i]))-estimate.box.width[1] ),
+              c( mean(c(y0[i], y1[i]))-estimate.box.width[2], mean(c(y0[i], y1[i]))-estimate.box.width[2], mean(c(y0[i], y1[i]))+estimate.box.width[2], mean(c(y0[i], y1[i]))+estimate.box.width[2])
               ,col = "white", border="white")
       text(mean(c(x0[i], x1[i])) , mean(c(y0[i], y1[i])), round(coeffs$estimate, digits = 1), cex=0.7)
       
