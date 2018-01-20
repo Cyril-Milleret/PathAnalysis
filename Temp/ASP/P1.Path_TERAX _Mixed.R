@@ -6,6 +6,9 @@ library(tidyr)
 library(piecewiseSEM)
 library(nlme)
 library(semPlot)
+library(lme4)
+
+source("~/PHD/Path analysis/PathAnalysis/Functions/PlotPath.R")
 
 setwd("C:/Users/Ana/Documents/PHD/Datos/Datos barbechos arrendados/Variables")
 
@@ -108,6 +111,26 @@ e.list2 <- list(
 e.fit2 <- sem.fit(e.list2, e) 
 e.coefs2 <- sem.coefs(e.list2,e)
 
+source("~/PHD/Path analysis/PathAnalysis/Functions/PlotPath.R")
+
+#pdf(file="path.pdf", width=7, height = 6.5)
+par(mar=c(1,1,1,1))
+
+PlotPath(e.coefs2
+         ,cex.text =0.6
+         ,cex.text1 = 0.75
+         ,offset.poly = 2
+         ,significant = 0.05
+         ,xlim=c(-20,70)
+         ,ylim=c(-30,60)
+         ,col.pos="blue"
+         ,col.neg="red"
+         ,col.non.signifi="grey"
+         ,Treatment.name= "CYRIL"
+         ,Species.name="PRESENCE \n cyril"
+         ,cex.category = 0.5
+         ,plot.axis=FALSE
+         ,text.box.width=c(2, 1))
 ####################################### PICAR ##############################
 
 e <- f[ , which(colnames(f) %in% c("CF_A", "Contatge", "Recob_plotViu", "Recob_plotMort","lev_ind", "Simpson", # All variables
