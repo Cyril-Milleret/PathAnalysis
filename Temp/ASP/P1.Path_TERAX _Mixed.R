@@ -111,9 +111,8 @@ e.list2 <- list(
 e.fit2 <- sem.fit(e.list2, e) 
 e.coefs2 <- sem.coefs(e.list2,e)
 
-source("~/PHD/Path analysis/PathAnalysis/Functions/PlotPath.R")
 
-pdf(file="path.pdf", width=7, height = 6.5)
+pdf(file="Terax_PH.pdf", width=7, height = 6.5)
 par(mar=c(1,1,1,1))
 
 PlotPath(e.coefs2
