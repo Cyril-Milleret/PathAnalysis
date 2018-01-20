@@ -27,7 +27,11 @@ PlotPath <- function(e.coefs
                      plot.axis=FALSE             # if axis should be plotted (for developping)
                      ,
                      estimate.box.width=c(3,3)   # width of the white box behind estimates values : first element :x axis and second : on the y axis 
-)
+                     ,
+                     cex.estimate = 0.7
+                     ,
+                     digits.estimate = 1
+                     )
 {
 require(sp)  
 
@@ -257,7 +261,7 @@ require(sp)
       polygon(c( mean(c(x0[i], x1[i]))-estimate.box.width[1], mean(c(x0[i], x1[i]))+estimate.box.width[1], mean(c(x0[i], x1[i]))+estimate.box.width[1] ,mean(c(x0[i], x1[i]))-estimate.box.width[1] ),
               c( mean(c(y0[i], y1[i]))-estimate.box.width[2], mean(c(y0[i], y1[i]))-estimate.box.width[2], mean(c(y0[i], y1[i]))+estimate.box.width[2], mean(c(y0[i], y1[i]))+estimate.box.width[2])
               ,col = "white", border="white")
-      text(mean(c(x0[i], x1[i])) , mean(c(y0[i], y1[i])), round(coeffs$estimate, digits = 1), cex=0.7)
+      text(mean(c(x0[i], x1[i])) , mean(c(y0[i], y1[i])), round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate)
       
     }else{
       arrows(x0=x0[i], x1=x1[i], y0=y0[i], y1= y1[i],length = 0.1, lwd=1, col=col.non.signifi )
