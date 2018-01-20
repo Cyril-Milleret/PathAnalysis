@@ -113,7 +113,7 @@ e.coefs2 <- sem.coefs(e.list2,e)
 
 source("~/PHD/Path analysis/PathAnalysis/Functions/PlotPath.R")
 
-#pdf(file="path.pdf", width=7, height = 6.5)
+pdf(file="path.pdf", width=7, height = 6.5)
 par(mar=c(1,1,1,1))
 
 PlotPath(e.coefs2
@@ -126,11 +126,13 @@ PlotPath(e.coefs2
          ,col.pos="blue"
          ,col.neg="red"
          ,col.non.signifi="grey"
-         ,Treatment.name= "CYRIL"
-         ,Species.name="PRESENCE \n cyril"
+         ,Treatment.name= "P + H"
+         ,Species.name="PRESENCE \n TERAX"
          ,cex.category = 0.5
          ,plot.axis=FALSE
          ,text.box.width=c(2, 1))
+
+dev.off()
 ####################################### PICAR ##############################
 
 e <- f[ , which(colnames(f) %in% c("CF_A", "Contatge", "Recob_plotViu", "Recob_plotMort","lev_ind", "Simpson", # All variables
