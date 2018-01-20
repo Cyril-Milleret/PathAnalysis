@@ -29,12 +29,8 @@ PlotPath <- function(e.coefs
                      text.box.width=c(3, 3) ## first element on the x axis and second on the y axis 
 )
 {
-  
-  library(sp)
-  library(plotrix)
-  
-  
-  
+require(sp)  
+
   grid.size.max <- 40
   grid.size.min <- 0
   coords <- matrix(c(grid.size.min         , grid.size.min ,
