@@ -30,6 +30,24 @@ PlotPath <- function(e.coefs
 )
 {
   
+  library(sp)
+  library(plotrix)
+  
+  
+  
+  grid.size.max <- 40
+  grid.size.min <- 0
+  coords <- matrix(c(grid.size.min         , grid.size.min ,
+                     grid.size.max , grid.size.min ,
+                     grid.size.max , grid.size.max ,
+                     grid.size.min          , grid.size.max,
+                     grid.size.min          , grid.size.min
+  ), ncol = 2, byrow = TRUE)
+  
+  P1 <- Polygon(coords)
+  myStudyArea.poly <-  SpatialPolygons(list(Polygons(list(P1), ID = "a")),
+                                       proj4string=CRS("+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0"))
+  
   
   
   plot(myStudyArea.poly, xlim=c(-20,70), ylim=c(-30,60), border="white")
