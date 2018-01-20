@@ -31,23 +31,45 @@ e.coefs <- e.coefs2
 
 
 plot.path<- function(e.coefs
-                     ,cex.text =0.6
-                     ,cex.text1 = 0.75
-                     ,offset.poly = 2
-                     ,significant = 0.05
-                     ,xlim=c(-20,70)
-                     ,ylim=c(-30,60)
-                     ,col.pos="red"
-                     ,col.neg="blue"
-                     ,col.non.signifi="grey"
-                     ,Treatment.name="TREATMENT"
-                     ,Species.name="SPECIES")
+                     ,
+                     cex.text =0.6
+                     ,
+                     cex.text1 = 0.75
+                     ,
+                     offset.poly = 2
+                     ,
+                     significant = 0.05
+                     ,
+                     xlim=c(-20,70)
+                     ,
+                     ylim=c(-30,60)
+                     ,
+                     cex.category = 0.6
+                     ,
+                     col.pos="red"
+                     ,
+                     col.neg="blue"
+                     ,
+                     col.non.signifi="grey"
+                     ,
+                     Treatment.name="TREATMENT"
+                     ,
+                     Species.name="SPECIES"
+                     , 
+                     plot.axis=FALSE
+                     ,
+                     text.box.width=c(3, 3) ## first element on the x axis and second on the y axis 
+                     )
 {
-plot(myStudyArea.poly, xlim=c(-20,70), ylim=c(-30,60), border="white")
 
-#axis(1)
-#axis(2)
+  
+  
+  plot(myStudyArea.poly, xlim=c(-20,70), ylim=c(-30,60), border="white")
 
+ if(plot.axis==TRUE){
+axis(1)
+axis(2)
+}
 
 
 # ==== I. DEFINE THE BASIC PATH STRUCTURE ==== 
@@ -62,20 +84,21 @@ text(mean(Pres[,1]),mean(Pres[,2]), Species.name, cex = cex.text1)
 
 
 # ---- 2. FOOD ---- 
-SAI_sd=cbind(c(9,25,25,9), c(8,8,12,12))
-LAI_sd=cbind(c(9,25,25,9), c(2,2,6,6))
-biom=cbind(c(9,25,25,9), c(-4,-4,0,0))
+SAI_sd=cbind(c(15,29,29,15), c(10,10,14,14))
+LAI_sd=cbind(c(15,29,29,15), c(4,4,8,8))
+biom=cbind(c(15,29,29,15), c(-2,-2,2,2))
 
 food= rbind(SAI_sd,LAI_sd,biom)
 min1 <- min(food[,1])-offset.poly
 min2 <- min(food[,2])-offset.poly
 max1 <- max(food[,1])+offset.poly
-max2 <- max(food[,2])+offset.poly
+max2 <- max(food[,2])+4
 
 
 polygon(c(min1,max1,max1,min1) ,
         c(min2,min2,max2,max2)  ,
          col =  adjustcolor("purple",alpha.f = 0.1), border = "white")
+text(mean(food[,1]),max(food[,2])+2 , "FOOD", col=grey(0.3), cex=cex.category)
 
   
 polygon(SAI_sd[,1], SAI_sd[,2], col =  adjustcolor("purple",alpha.f = 0.5), border = "white")
@@ -98,12 +121,12 @@ veg= rbind(Diver,Heter,Height,Cover,Cover_dead)
 min1 <- min(veg[,1])-offset.poly
 min2 <- min(veg[,2])-offset.poly
 max1 <- max(veg[,1])+offset.poly
-max2 <- max(veg[,2])+offset.poly
-
+max2 <- max(veg[,2])+4
 
 polygon(c(min1,max1,max1,min1) ,
         c(min2,min2,max2,max2)  ,
         col =  adjustcolor("green",alpha.f = 0.1), border = "white")
+text(mean(veg[,1]),max(veg[,2])+2 , "VEGETATION", col=grey(0.3), cex=cex.category)
 
 
 polygon(Diver[,1], Diver[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
@@ -122,22 +145,23 @@ polygon(Cover_dead[,1], Cover_dead[,2], col =  adjustcolor("green",alpha.f = 0.5
 text(mean(Cover_dead[,1]),mean(Cover_dead[,2]), "COVER_DEAD", cex = cex.text)
 
 # ---- 4. VEGETATION  2 ---- 
-Diver1=cbind(c(-18,2,2,-18), c(-32,-32,-28,-28))
-Heter1=cbind(c(-18,2,2,-18), c(-26,-26,-22,-22))
-Height1=cbind(c(-18,2,2,-18), c(-20,-20,-16,-16))
-Cover1=cbind(c(-18,2,2,-18), c(-14,-14,-10,-10))
-Cover_dead1=cbind(c(-18,2,2,-18), c(-8,-8,-4,-4))
+Diver1=cbind(c(-20,0,0,-20), c(-22,-22,-18,-18))
+Heter1=cbind(c(-20,0,0,-20), c(-16,-16,-12,-12))
+Height1=cbind(c(-20,0,0,-20), c(-10,-10,-6,-6))
+Cover1=cbind(c(-20,0,0,-20), c(-4,-4,0,0))
+Cover_dead1=cbind(c(-20,0,0,-20), c(2,2,6,6))
 
 veg1= rbind(Diver1,Heter1,Height1,Cover1,Cover_dead1)
 min1 <- min(veg1[,1])-offset.poly
 min2 <- min(veg1[,2])-offset.poly
 max1 <- max(veg1[,1])+offset.poly
-max2 <- max(veg1[,2])+offset.poly
+max2 <- max(veg1[,2])+4
 
 
 polygon(c(min1,max1,max1,min1) ,
         c(min2,min2,max2,max2)  ,
         col =  adjustcolor("green",alpha.f = 0.1), border = "white")
+text(mean(veg1[,1]),max(veg1[,2])+2 , "VEGETATION", col=grey(0.3), cex=cex.category)
 
 
 polygon(Diver1[,1], Diver1[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
@@ -167,13 +191,14 @@ landscape= rbind(tbl,par,Fallow,Irrig)
 min1 <- min(landscape[,1])-offset.poly
 min2 <- min(landscape[,2])-offset.poly
 max1 <- max(landscape[,1])+offset.poly
-max2 <- max(landscape[,2])+offset.poly
+max2 <- max(landscape[,2])+4
 
 
 polygon(c(min1,max1,max1,min1) ,
         c(min2,min2,max2,max2)  ,
         col =  adjustcolor("brown",alpha.f = 0.1), border = "white")
 
+text(mean(landscape[,1]),max(landscape[,2])+2 , "LANDSCAPE", col=grey(0.3), cex=cex.category)
 
 polygon(tbl[,1], tbl[,2], col =  adjustcolor("brown",alpha.f = 0.5), border = "white")
 text(mean(tbl[,1]),mean(tbl[,2]), "TBL", cex = cex.text)
@@ -212,7 +237,7 @@ x0= c(Treatment[2,1], rep(mean(Treatment[c(1:2),1]),8),
 
 x1= c(Pres[1,1], SAI_sd[1,1] , LAI_sd[1,1], biom[1,1], Diver[1,1], Heter[1,1], Height[1,1], Cover[1,1], Cover_dead[1,1],
       rep(mean(Pres[1:2,1]), 5),
-      rep(mean(biom[1:2,1]), 5),
+      rep(mean(biom[1,1]), 5),
       rep(mean(biom[2,1]), 4),
       rep(Pres[1,1],3))
 
@@ -241,6 +266,9 @@ for(i in 1:length(x0)){
   
   if(coeffs$p.value < significant){
     arrows(x0=x0[i], x1=x1[i], y0=y0[i], y1= y1[i],length = 0.1, lwd=2, col=ifelse(coeffs$estimate>0, col.pos, col.neg) )
+    polygon(c( mean(c(x0[i], x1[i]))-text.box.width[1], mean(c(x0[i], x1[i]))+text.box.width[1], mean(c(x0[i], x1[i]))+text.box.width[1] ,mean(c(x0[i], x1[i]))-text.box.width[1] ),
+            c( mean(c(y0[i], y1[i]))-text.box.width[2], mean(c(y0[i], y1[i]))-text.box.width[2], mean(c(y0[i], y1[i]))+text.box.width[2], mean(c(y0[i], y1[i]))+text.box.width[2])
+            ,col = "white", border="white")
     text(mean(c(x0[i], x1[i])) , mean(c(y0[i], y1[i])), round(coeffs$estimate, digits = 1), cex=0.7)
     
   }else{
@@ -388,7 +416,10 @@ plot.path(e.coefs
           ,col.neg="red"
           ,col.non.signifi="grey"
           ,Treatment.name= "CYRIL"
-          ,Species.name="PRESENCE \n cyril")
+          ,Species.name="PRESENCE \n cyril"
+          ,cex.category = 0.5
+          ,plot.axis=FALSE
+          ,text.box.width=c(2, 1))
 
 
 dev.off()
