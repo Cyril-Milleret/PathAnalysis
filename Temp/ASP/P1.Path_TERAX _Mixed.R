@@ -129,7 +129,9 @@ PlotPath(e.coefs2
          ,Species.name="PRESENCE \n TERAX"
          ,cex.category = 0.5
          ,plot.axis=FALSE
-         ,estimate.box.width=c(2, 1))
+         ,estimate.box.width=c(2, 1),
+         cex.estimate = 0.7,
+         digits.estimate = 2)
 
 dev.off()
 ####################################### PICAR ##############################
