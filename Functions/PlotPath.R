@@ -33,6 +33,10 @@ PlotPath <- function(e.coefs
                      digits.estimate = 1
                      )
 {
+  print("##########")
+
+  readline(prompt="By Pressing [enter], it will automatically add 10 besos on Cyril's account ")
+  
 require(sp)  
 
   grid.size.max <- 40
@@ -388,5 +392,9 @@ require(sp)
   # arrows(x0=mean(par[c(1),1]), x1=mean(biom[2,1]), y0=mean(par[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
   # arrows(x0=mean(Fallow[c(1),1]), x1=mean(biom[2,1]), y0=mean(Fallow[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
   # arrows(x0=mean(Irrig[c(1),1]), x1=mean(biom[2,1]), y0=mean(Irrig[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
+  
+  print("BESOS SUCCESSFULLY ADDED")
+  print("GRACIAS!  <3")
+  
   
 }
