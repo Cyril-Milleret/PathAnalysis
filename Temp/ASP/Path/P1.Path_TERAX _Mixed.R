@@ -18,6 +18,14 @@ f <- f[ which(f$Zone == "ORIENTAL"), ]
 f[f == 99.00] <- NA
 f <- f[-which(duplicated(f[ , 2:15])), ]
 f <- f[which(complete.cases(f$Contatge)), ]
+length(which(f$Contatge > 0)) #108/451
+
+# Oriental or Occidental&Oriental?
+oc <- f[ which(f$Zone == "OCCIDENTAL"), ]
+oc[oc == 99.00] <- NA
+oc <- oc[-which(duplicated(oc[ , 2:15])), ]
+oc <- oc[which(complete.cases(oc$Contatge)), ]
+which(oc$Contatge > 0) #30/224
 
 
 ################################### PICAR Y HERBICIDAR #################################################################### 
