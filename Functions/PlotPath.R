@@ -62,7 +62,7 @@ require(sp)
   }
   
   
-  # ==== I. DEFINE THE BASIC PATH STRUCTURE ==== 
+  # ==== I. DEFINE THE BASIC PATH STRUCTURE ==== # Define position of boxes
   # ---- 1. Treatment/ PRESENCE ---- 
   Treatment=cbind(c(-20,-6,-6,-20), c(16,16,23,23)) # 1st column X : bottomleft, bottom right, topright, topleft.# 2nd column Y
   polygon(Treatment[,1], Treatment[,2], col =  adjustcolor("orange",alpha.f = 0.5), border = "white")
@@ -204,7 +204,7 @@ require(sp)
   text(mean(Irrig[,1]),mean(Irrig[,2]), "IRRIGATION", cex = cex.text)
   
   
-  # ==== II. ADD THE ARROW ==== 
+  # ==== II. ADD THE ARROW ====  Define position of beginning and end of arrows (NO LANDSCAPE)
   #FROM Treatment 
   
   predictors <- c( rep("Treatment", 9),
@@ -255,24 +255,25 @@ require(sp)
   
   
   
-  for(i in 1:length(x0)){
+  for(i in 1:length(x0)){ # Length: Number of arrows (Do something for each arrow NO LANDSCAPE)
     #for(i in 1:8){
     
-    coeffs <- e.coefs[e.coefs$predictor== predictors[i] & e.coefs$response== response[i] ,]
-    
-    if(coeffs$p.value < significant){
+    coeffs <- e.coefs[e.coefs$predictor== predictors[i] & e.coefs$response== response[i] ,] # From coefficients, select the first row 
+                                                                                            #I am interested in (in the order of the arrows that
+                                                                                            # join predictor - response).
+    if(coeffs$p.value < significant){ # If it is signifficant, draw the arrows with colors and place estimate in box
       arrows(x0=x0[i], x1=x1[i], y0=y0[i], y1= y1[i],length = 0.1, lwd=2, col=ifelse(coeffs$estimate>0, col.pos, col.neg) )
       polygon(c( mean(c(x0[i], x1[i]))-estimate.box.width[1], mean(c(x0[i], x1[i]))+estimate.box.width[1], mean(c(x0[i], x1[i]))+estimate.box.width[1] ,mean(c(x0[i], x1[i]))-estimate.box.width[1] ),
               c( mean(c(y0[i], y1[i]))-estimate.box.width[2], mean(c(y0[i], y1[i]))-estimate.box.width[2], mean(c(y0[i], y1[i]))+estimate.box.width[2], mean(c(y0[i], y1[i]))+estimate.box.width[2])
               ,col = "white", border="white")
       text(mean(c(x0[i], x1[i])) , mean(c(y0[i], y1[i])), round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate)
       
-    }else{
+    }else{ #If it is not significant, put it grey and no box
       arrows(x0=x0[i], x1=x1[i], y0=y0[i], y1= y1[i],length = 0.1, lwd=1, col=col.non.signifi )
     }
   }
   
-  
+  #NOW, ADD LANDSCAPE ARROWS
   coeffs <- e.coefs[e.coefs$predictor== "Irrig" & e.coefs$response=="Pres"  ,]
   if(coeffs$p.value>significant){
     arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
@@ -353,7 +354,7 @@ require(sp)
   
   
   
-  
+  # DEFINE POSITION OF ARROWS ONE BY ONE TO PLACE IT EASIER IN X0, X1, Y0, Y1
   # arrows(x0=Treatment[2,1], x1=Pres[1,1], y0=mean(Treatment[2:3,2]), y1= mean(Pres[c(1,4),2]),length = 0.1)
   # arrows(x0=mean(Treatment[c(1:2),1]), x1=SAI_sd[1,1], y0=mean(Treatment[1,2]), y1= mean(SAI_sd[c(1,4),2]),length = 0.1)
   # arrows(x0=mean(Treatment[c(1:2),1]), x1=LAI_sd[1,1], y0=mean(Treatment[1,2]), y1= mean(LAI_sd[c(1,4),2]),length = 0.1)
@@ -381,7 +382,7 @@ require(sp)
   # arrows(x0=mean(Cover_dead1[c(2),1]), x1=mean(biom[1:2,1]), y0=mean(Cover_dead1[3:2,2]), y1= mean(biom[c(1),2]),length = 0.1)
   # 
   
-  #from vegetation 
+  #from food
   # arrows(x0=SAI_sd[3,1], x1=Pres[1,1], y0=SAI_sd[3,2], y1= Pres[1,2],length = 0.1)
   # arrows(x0=LAI_sd[3,1], x1=Pres[1,1], y0=LAI_sd[3,2], y1= Pres[1,2],length = 0.1)
   # arrows(x0=biom[3,1], x1=Pres[1,1], y0=biom[3,2], y1= Pres[1,2],length = 0.1)
@@ -398,3 +399,5 @@ require(sp)
   
   
 }
+
+
