@@ -1,4 +1,6 @@
 
+setwd("~/Path analysis")
+pdf(file = "Path_Network.pdf")
 
   offset.poly = 2 
   cex.text = 0.6              
@@ -7,11 +9,10 @@
   Treatment.name="TREATMENT"  
   Species.name="SPECIES"
   
-  setwd("~/Path analysis/Path_species")
-  pdf(file = "Path_Network.pdf")
   
   require(sp)
   require(plotrix)
+  require(diagram)
   
   grid.size.max <- 40
   grid.size.min <- 0
@@ -30,7 +31,6 @@
   
   plot(myStudyArea.poly, xlim=c(-20,70), ylim=c(-30,60), border="white")
   
-
     #axis(1)
     #axis(2)
  
@@ -302,45 +302,98 @@
    
     arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
            lwd=1, col= "grey")
+    
     segments(x0=mean(Irrig[2,1]), x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Irrig[3:2,2]),
              lwd=1, col= "grey")
+    
     draw.circle(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5, mean(c(mean(Irrig[3:2,2]), mean(Irrig[3:2,2]))), radius = 1.3, 
                      border = adjustcolor("blue",alpha.f = 0.5), col = "white")
+    
     text(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5 , mean(c(mean(mean(Irrig[3:2,2])), mean(Irrig[3:2,2]))),"N", cex = 0.7, 
          col = adjustcolor("blue",alpha.f = 0.5))
     
 
+    
+    
   
     arrows(x0=mean(Pres[1:2,1])+4, x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
            lwd=1, col= "grey")
+    
     segments(x0=mean(Fallow[2,1]), x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Fallow[3:2,2]),
              lwd=1, col= "grey")
+    
     draw.circle(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5, mean(c(mean(Fallow[3:2,2]), mean(Fallow[3:2,2]))), radius = 1.3, 
                 border = adjustcolor("blue",alpha.f = 0.5), col = "white")
+    
     text(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5 , mean(c(mean(Fallow[3:2,2]), mean(Fallow[3:2,2]))),"N", cex = 0.7, 
          col = adjustcolor("blue",alpha.f = 0.5))
     
     
     
+    
+    
     arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
            lwd=1, col="grey")
+    
     segments(x0=mean(par[2,1]), x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(par[3:2,2]),
              lwd=1, col="grey")
+    
     draw.circle(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5, mean(c(mean(par[3:2,2]), mean(par[3:2,2]))), radius = 1.3, 
                 border = adjustcolor("blue",alpha.f = 0.5), col = "white")
+    
     text(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5 , mean(c(mean(par[3:2,2]), mean(par[3:2,2]))),"N", cex = 0.7, 
          col = adjustcolor("blue",alpha.f = 0.5))
     
     
     
+    
     arrows(x0=mean(Pres[1:2,1])-1, x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
            lwd=1, col= "grey")
+    
     segments(x0=mean(tbl[2,1]), x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(tbl[3:2,2]),
              lwd=1, col= "grey")
+    
     draw.circle(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5, mean(c(mean(tbl[3:2,2]), mean(tbl[3:2,2]))), radius = 1.3, 
                 border = adjustcolor("blue",alpha.f = 0.5), col = "white")
+    
     text(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5 , mean(c(mean(tbl[3:2,2]), mean(tbl[3:2,2]))),"N", cex = 0.7, 
          col = adjustcolor("blue",alpha.f = 0.5))
+    
+    
+    #CORRELATED ERRORS
+    
+    
+    arrows(x0=mean(Cover1[2,1]), x1=mean(SAI_sd[1,1]), y0=mean(Cover1[2:3,2]), y1= mean(SAI_sd[2:3,2]), length = 0, 
+           lwd=1, col= "red",lty = "dashed")
+    
+    draw.circle(mean ( c(mean(Cover1[2,1]), mean(SAI_sd[1,1])) ) - 6, mean( c(mean(Cover1[2:3,2]), mean(SAI_sd[2:3,2])) ) - 4, radius = 1.3, 
+                border = "red", col = "white")
+                
+    text( mean ( c(mean(Cover1[2,1]), mean(SAI_sd[1,1])) ) - 6, mean( c(mean(Cover1[2:3,2]), mean(SAI_sd[2:3,2])) ) - 4,"F", cex = 0.7, 
+         col = "red")
+    
+    
+    
+    
+    arrows(x0=mean(Height1[2,1]), x1=mean(SAI_sd[1,1]), y0=mean(Height1[2:3,2]), y1= mean(SAI_sd[2:3,2]), length = 0, 
+           lwd=1, col= "red",lty = "dashed")
+    
+    draw.circle(mean ( c(mean(Height1[2,1]), mean(SAI_sd[1,1])) ) - 6, mean( c(mean(Height1[2:3,2]), mean(SAI_sd[2:3,2])) ) - 6, radius = 1.3, 
+                border = "red", col = "white")
+    
+    text( mean ( c(mean(Height1[2,1]), mean(SAI_sd[1,1])) ) - 6, mean( c(mean(Height1[2:3,2]), mean(SAI_sd[2:3,2])) ) - 6 ,"F", cex = 0.7, 
+          col = "red")
+    
+    
+    
+    curvedarrow(from = c(SAI_sd[2,1],mean(SAI_sd[2:3,2])), to = c(LAI_sd[2,1],mean(LAI_sd[2:3,2])), 
+                lwd = 1, code = 3, lcol = "red", lty = "dashed", curve = -0.7, arr.pos = 1, arr.type = "simple", col = "red", arr.col = "red",
+                arr.length = 0.3) #Error when adding code = 3 for double-headed arrow
+    
+    draw.circle( 33, mean( c(mean(SAI_sd[2:3,2]), mean(LAI_sd[2:3,2])) ), radius = 1.3, 
+                border = "red", col = "white")
+    
+    text( 33, mean( c(mean(SAI_sd[2:3,2]), mean(LAI_sd[2:3,2])) ),"E", cex = 0.7, col = "red")
     
     
 
