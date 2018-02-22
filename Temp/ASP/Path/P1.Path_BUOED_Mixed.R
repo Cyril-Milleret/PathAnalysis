@@ -25,9 +25,9 @@ length(unique(f$Codi_Finca))
 
 e <- f[ , which(colnames(f) %in% c("CF_A", "Contatge", "Recob_plotViu", "Recob_plotMort","lev_ind", "Simpson", # All variables
                                    "PromigAltura1Plot", "biom", "SAI_sd","LAI_sd", "TBL_500", "PAR_500","Fallow_500", 
-                                   "Irri_500","Zone", "Tractament", "Any", "Codi_Finca"))]
+                                   "Irri_500","Zone", "Tractament", "Any", "Codi_Finca", "area"))]
 
-e <- e[ ,c(3:18,1,2)]
+e <- e[ ,c(3:19,1,2)]
 
 
 e <-e[-which(duplicated(e[ , 1])), ]
@@ -57,13 +57,14 @@ colnames(e)[4] <- "Cover_dead"
 colnames(e)[5] <- "Height"
 colnames(e)[6] <- "Diver"
 colnames(e)[7] <- "Heter"
-colnames(e)[8] <- "tbl"
-colnames(e)[9] <- "par"
-colnames(e)[10] <- "Fallow"
-colnames(e)[11] <- "Irrig"
-colnames(e)[16] <- "Field"
-colnames(e)[17] <- "Year"
-colnames(e)[19] <- "Treatment"
+colnames(e)[8] <- "area"
+colnames(e)[9] <- "tbl"
+colnames(e)[10] <- "par"
+colnames(e)[11] <- "Fallow"
+colnames(e)[12] <- "Irrig"
+colnames(e)[17] <- "Field"
+colnames(e)[18] <- "Year"
+colnames(e)[20] <- "Treatment"
 
 e$Cover<-scale(e$Cover)
 e$Height<-scale(e$Height)
@@ -75,6 +76,7 @@ e$tbl<-scale(e$tbl)
 e$par<-scale(e$par)
 e$Fallow<-scale(e$Fallow)
 e$Irrig<-scale(e$Irrig)
+e$area <- scale(e$area)
 
 e$Pres[e$Pres > 1] <- 1 # Binomial response
 
@@ -159,13 +161,13 @@ e.list4 <- list(
   lmer( LAI_sd ~ Treatment  + Fallow + par + tbl + Cover + Height + Diver + (1|Year), na.action = na.omit, data = e),
   
   glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + SAI_sd + LAI_sd
-         + Fallow + Irrig + par + tbl + (1|Year), na.action = na.omit, family = "binomial"(link = "logit"), data = e))
+         + Fallow + Irrig + par + tbl + area + (1|Year), na.action = na.omit, family = "binomial"(link = "logit"), data = e))
 
 e.fit4 <- sem.fit(e.list4, e) # AIC = 231
 e.coefs4 <- sem.coefs(e.list4,e)
 
 setwd("~/Path analysis/Path_species")
-pdf(file = "Buoed_PH.pdf")
+pdf(file = "Buoed_PHb.pdf")
 par(mar=c(1,1,1,1))
 
 PlotPath(e.coefs4
