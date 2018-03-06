@@ -1,5 +1,5 @@
 
-#No direct arrow; + field area
+#No direct arrow; + field area; + Crop diversity
 
 PlotPath <- function(e.coefs
                      ,
