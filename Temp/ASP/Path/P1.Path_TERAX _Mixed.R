@@ -1,43 +1,41 @@
 
 rm(list=ls())
 
-#PATH ANALYSIS TERAX
+#PATH ANALYSIS TERAX. Plot with PlotPath4 (-SAI)
 
 library(dplyr)
 library(tidyr)
 library(piecewiseSEM)
 library(nlme)
-library(semPlot)
+library(lme4)
 
-setwd("C:/Users/ana.sanz/Documents/Datos/Datos barbechos arrendados/Variables")
+setwd("~/Datos/Datos barbechos arrendados/Variables")
 
 f <- read.csv("Variables.csv", sep = ",", header=TRUE, fill = TRUE)
+colnames(f)[6] <- "EspecieObj"
+f <- f[which(f$EspecieObj == "TERAX_m"), ]
 
-f <- f[which(f$EspecieObj == "TERAX_M"), ]
-f <- f[ which(f$Zone == "ORIENTAL"), ]
+
 f[f == 99.00] <- NA
 f <- f[-which(duplicated(f[ , 2:15])), ]
 f <- f[which(complete.cases(f$Contatge)), ]
-length(which(f$Contatge > 0)) #108/451
+length(which(f$Contatge > 0)) 
 
-# Oriental or Occidental&Oriental?
-oc <- f[ which(f$Zone == "OCCIDENTAL"), ]
-oc[oc == 99.00] <- NA
-oc <- oc[-which(duplicated(oc[ , 2:15])), ]
-oc <- oc[which(complete.cases(oc$Contatge)), ]
-which(oc$Contatge > 0) #30/224
+f_or <- f[ which(f$Zone == "ORIENTAL"), ] # Occidental y oriental or only oriental?
+length(which(f_or$Contatge > 0))
+f_oc <- f[ which(f$Zone == "OCCIDENTAL"), ] 
+length(which(f_oc$Contatge > 0)) #INCLUDE BOTH
+
 
 
 ################################### PICAR Y HERBICIDAR #################################################################### 
 
 e <- f[ , which(colnames(f) %in% c("CF_A", "Contatge", "Recob_plotViu", "Recob_plotMort","lev_ind", "Simpson", # All variables
                                    "PromigAltura1Plot", "biom", "SAI_sd","LAI_sd", "TBL_500", "PAR_500","Fallow_500", 
-                                   "Irri_500","Zone", "Tractament", "Any", "Codi_Finca"))]
-
-e <- e[ ,c(3:18,1,2)]
+                                   "Irri_500", "Tree_500", "shan_500", "Zone", "Tractament", "Any", "Codi_Finca", "area"))]
 
 
-e <-e[-which(duplicated(e[ , 1])), ]
+e <-e[-which(duplicated(e[ , 8])), ] #Modify adding good duplicates!
 
 e <- e[ which(e$Tractament %in% c("Control", "Picar i herbicidar")), ] #Select treatment
 
@@ -47,22 +45,37 @@ e <- e %>%
   spread(Tractament, new, fill = 0) #Create dummy variable for treatment
 
 
-colnames(e)[2] <- "Pres"
-colnames(e)[3] <- "Cover"
-colnames(e)[4] <- "Cover_dead"
-colnames(e)[5] <- "Height"
-colnames(e)[6] <- "Diver"
-colnames(e)[7] <- "Heter"
-colnames(e)[8] <- "tbl"
-colnames(e)[9] <- "par"
-colnames(e)[10] <- "Fallow"
-colnames(e)[11] <- "Irrig"
-colnames(e)[16] <- "Field"
-colnames(e)[17] <- "Year"
-colnames(e)[19] <- "Treatment"
+length(which(e$Zone == "OCCIDENTAL" & e$`Picar i herbicidar` == "1"))
+length(which(e$Zone == "ORIENTAL" & e$`Picar i herbicidar` == "1"))
+length(which(e$Zone == "OCCIDENTAL")) # 178 #Possibility to add ZONE?SI
+length(which(e$Zone == "ORIENTAL")) #302
+
+e$Zone <- as.character(e$Zone)
+e$Zone[which(e$Zone == "OCCIDENTAL")] <- 0
+e$Zone[which(e$Zone == "ORIENTAL")] <- 1
+e$Zone <- as.factor(e$Zone)
+
+
+colnames(e)[3] <- "Pres"
+colnames(e)[4] <- "Cover"
+colnames(e)[5] <- "Cover_dead"
+colnames(e)[6] <- "Height"
+colnames(e)[7] <- "Diver"
+colnames(e)[9] <- "Heter"
+colnames(e)[10] <- "area"
+colnames(e)[11] <- "tbl"
+colnames(e)[12] <- "par"
+colnames(e)[13] <- "Fallow"
+colnames(e)[14] <- "Tree"
+colnames(e)[15] <- "Irrig"
+colnames(e)[20] <- "crop_diver"
+colnames(e)[2] <- "Year"
+colnames(e)[22] <- "Treatment"
 
 e$Cover<-scale(e$Cover)
+e$Cover_sq<-scale(I(e$Cover^2))
 e$Height<-scale(e$Height)
+e$Height_sq<-scale(I(e$Height^2))
 e$biom<-scale(e$biom)
 e$Cover_dead<-scale(e$Cover_dead)
 e$Heter<-scale(e$Heter)
@@ -71,58 +84,102 @@ e$tbl<-scale(e$tbl)
 e$par<-scale(e$par)
 e$Fallow<-scale(e$Fallow)
 e$Irrig<-scale(e$Irrig)
+e$Tree<-scale(e$Tree)
+e$crop_diver<-scale(e$crop_diver)
+e$area <- scale(e$area)
+
 
 e$Pres[e$Pres > 1] <- 1 # Binomial response
 
+#Check correlations
+g <- e[ ,c(4:7,9:15, 17:20)]
+cor(g, use = "complete.obs") #Crop_diver - Tree: 0.66 (Quitar Tree?)
+#LAI_sd - SAI_sd: 0.57 (quitar SAI)
 
 
 #PATH ANALYSIS
 e <- na.omit(e)
 
+# Random intercept zone
+e.list1 <- list( 
+  lmer( Cover ~ Treatment + (1|Zone), data = e),
+  lmer( Cover_dead ~ Treatment + (1|Zone), data = e),
+  lmer( Height ~ Treatment + (1|Zone), data = e),
+  lmer( Heter ~ Treatment + (1|Zone), data = e),
+  lmer( Diver ~ Treatment + (1|Zone), data = e),
+  
+  lmer( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
+          Cover + Height + Cover_dead + Heter + Diver + LAI_sd + (1|Zone), data = e),
+  lmer( LAI_sd ~ Treatment + Cover + Height + (1|Zone), data = e),
+  
+  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+           LAI_sd + Fallow + crop_diver + par + tbl + area + (1|Zone), 
+         family = "binomial"(link = "logit"), data = e))
+
+e.fit1 <- sem.fit(e.list1, e) # AIC = 663
 
 # Random intercept Year
-e.list1 <- list( 
-  lmer( Cover ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( Cover_dead ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( Height ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( Heter ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( Diver ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  
-  lmer( biom ~ Treatment + Fallow + Irrig + par + tbl + Cover + Height + Cover_dead 
-        + Heter + Diver + LAI_sd + (1|Year), na.action = na.omit, data = e),
-  lmer( SAI_sd ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( LAI_sd ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  
-  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + SAI_sd + LAI_sd
-         + Fallow + Irrig + par + tbl + (1|Year), na.action = na.omit, family = "binomial"(link = "logit"), data = e))
-
-e.fit1 <- sem.fit(e.list1, e) 
-
-# DEFINE BASIS SET WITH RANDOM YEAR
-
 e.list2 <- list( 
-  lmer( Cover ~ Treatment + par + (1|Year), na.action = na.omit, data = e),
-  lmer( Cover_dead ~ Treatment + Fallow + par + (1|Year), na.action = na.omit, data = e),
-  lmer( Height ~ Treatment + Cover + (1|Year), na.action = na.omit, data = e),
-  lmer( Heter ~ Treatment + Cover_dead + Height + (1|Year), na.action = na.omit, data = e),
-  lmer( Diver ~ Treatment + par + Cover + Cover_dead + (1|Year), na.action = na.omit, data = e),
+  lmer( Cover ~ Treatment + (1|Year), data = e),
+  lmer( Cover_dead ~ Treatment + (1|Year), data = e),
+  lmer( Height ~ Treatment + (1|Year), data = e),
+  lmer( Heter ~ Treatment + (1|Year), data = e),
+  lmer( Diver ~ Treatment + (1|Year), data = e),
   
-  lmer( biom ~ Treatment + Fallow + Irrig + par + tbl + Cover + Height + Cover_dead 
-        + Heter + Diver + LAI_sd + (1|Year), na.action = na.omit, data = e),
-  lmer( SAI_sd ~ Treatment + par + Cover + Cover_dead + Height + Diver + LAI_sd + (1|Year), na.action = na.omit, data = e),
-  lmer( LAI_sd ~ Treatment + par + Cover + Height + Diver + (1|Year), na.action = na.omit, data = e),
+  lmer( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
+          Cover + Height + Cover_dead + Heter + Diver + LAI_sd + (1|Year), data = e),
+  lmer( LAI_sd ~ Treatment + Cover + Height + (1|Year), data = e),
   
-  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + SAI_sd + LAI_sd
-         + Fallow + Irrig + par + tbl + (1|Year), na.action = na.omit, family = "binomial"(link = "logit"), data = e))
+  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+           LAI_sd + Fallow + crop_diver + par + tbl + area + (1|Year), 
+         family = "binomial"(link = "logit"), data = e))
 
-e.fit2 <- sem.fit(e.list2, e) 
-e.coefs2 <- sem.coefs(e.list2,e)
+e.fit2 <- sem.fit(e.list2, e) # AIC = 641
 
-setwd("~/Path analysis/Path_species")
-pdf(file = "Terax_PH.pdf")
+
+# Random intercept Zone + Year
+e.list3 <- list( 
+  lmer( Cover ~ Treatment + (1|Year) + (1|Zone), data = e),
+  lmer( Cover_dead ~ Treatment + (1|Year) + (1|Zone), data = e),
+  lmer( Height ~ Treatment + (1|Year) + (1|Zone), data = e),
+  lmer( Heter ~ Treatment + (1|Year) + (1|Zone), data = e),
+  lmer( Diver ~ Treatment + (1|Year) + (1|Zone), data = e),
+  
+  lmer( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
+          Cover + Height + Cover_dead + Heter + Diver + LAI_sd + (1|Year) + (1|Zone), data = e),
+  lmer( LAI_sd ~ Treatment + Cover + Height + (1|Year) + (1|Zone), data = e),
+  
+  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+           LAI_sd + Fallow + crop_diver + par + tbl + area + (1|Year) + (1|Zone), 
+         family = "binomial"(link = "logit"), data = e))
+
+e.fit3 <- sem.fit(e.list3, e) # AIC = 642
+
+# DEFINE BASIS SET YEAR + ZONE: Model with only directed path doesnt fit the data. Include missing paths and correlated errors
+
+e.list4 <- list( 
+  lmer( Cover ~ Treatment + par + area + Fallow + (1|Year) + (1|Zone), data = e),
+  lmer( Cover_dead ~ Treatment + Fallow + par + area + Cover + (1|Year) + (1|Zone), data = e),
+  lmer( Height ~ Treatment + Cover + tbl + area + (1|Year) + (1|Zone), data = e),
+  lmer( Heter ~ Treatment + crop_diver + Cover + Cover_dead + Height + (1|Year) + (1|Zone), data = e),
+  lmer( Diver ~ Treatment + par + area + Cover + Cover_dead + Height + (1|Year) + (1|Zone), data = e),
+  
+  lmer( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
+          Cover + Height + Cover_dead + Heter + Diver + LAI_sd + (1|Year) + (1|Zone), data = e),
+  lmer( LAI_sd ~ Treatment + Cover + Height + par + tbl + area + Diver + Cover_dead + (1|Year) + (1|Zone), data = e),
+  
+  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+           LAI_sd + Fallow + crop_diver + par + tbl + area + (1|Year) + (1|Zone), 
+         family = "binomial"(link = "logit"), data = e))
+
+e.fit4 <- sem.fit(e.list4, e) # AIC = 214
+e.coefs4 <- sem.coefs(e.list4,e)
+
+setwd("~/First chapter/Path analysis/Results")
+pdf(file = "Terax_SH.pdf")
 par(mar=c(1,1,1,1))
 
-PlotPath(e.coefs2
+PlotPath(e.coefs4
          ,cex.text =0.6
          ,cex.text1 = 0.75
          ,offset.poly = 2
@@ -132,7 +189,7 @@ PlotPath(e.coefs2
          ,col.pos="blue"
          ,col.neg="red"
          ,col.non.signifi="grey"
-         ,Treatment.name= "P + H"
+         ,Treatment.name= "SHREDDING +\n HERBICIDE"
          ,Species.name="PRESENCE \n TERAX"
          ,cex.category = 0.5
          ,plot.axis=FALSE
@@ -145,12 +202,10 @@ dev.off()
 
 e <- f[ , which(colnames(f) %in% c("CF_A", "Contatge", "Recob_plotViu", "Recob_plotMort","lev_ind", "Simpson", # All variables
                                    "PromigAltura1Plot", "biom", "SAI_sd","LAI_sd", "TBL_500", "PAR_500","Fallow_500", 
-                                   "Irri_500","Zone", "Tractament", "Any", "Codi_Finca"))]
-
-e <- e[ ,c(3:18,1,2)]
+                                   "Irri_500", "Tree_500", "shan_500", "Zone", "Tractament", "Any", "Codi_Finca", "area"))]
 
 
-e <-e[-which(duplicated(e[ , 1])), ]
+e <-e[-which(duplicated(e[ , 8])), ] #Modify adding good duplicates!
 
 e <- e[ which(e$Tractament %in% c("Control", "Picar")), ] #Select treatment
 
@@ -159,22 +214,38 @@ e <- e %>%
   mutate(new = 1) %>% 
   spread(Tractament, new, fill = 0) #Create dummy variable for treatment
 
-colnames(e)[2] <- "Pres"
-colnames(e)[3] <- "Cover"
-colnames(e)[4] <- "Cover_dead"
-colnames(e)[5] <- "Height"
-colnames(e)[6] <- "Diver"
-colnames(e)[7] <- "Heter"
-colnames(e)[8] <- "tbl"
-colnames(e)[9] <- "par"
-colnames(e)[10] <- "Fallow"
-colnames(e)[11] <- "Irrig"
-colnames(e)[16] <- "Field"
-colnames(e)[17] <- "Year"
-colnames(e)[19] <- "Treatment"
+
+length(which(e$Zone == "OCCIDENTAL" & e$`Picar i herbicidar` == "1"))
+length(which(e$Zone == "ORIENTAL" & e$`Picar i herbicidar` == "1"))
+length(which(e$Zone == "OCCIDENTAL")) # 178 #Possibility to add ZONE?SI
+length(which(e$Zone == "ORIENTAL")) #302
+
+e$Zone <- as.character(e$Zone)
+e$Zone[which(e$Zone == "OCCIDENTAL")] <- 0
+e$Zone[which(e$Zone == "ORIENTAL")] <- 1
+e$Zone <- as.factor(e$Zone)
+
+
+colnames(e)[3] <- "Pres"
+colnames(e)[4] <- "Cover"
+colnames(e)[5] <- "Cover_dead"
+colnames(e)[6] <- "Height"
+colnames(e)[7] <- "Diver"
+colnames(e)[9] <- "Heter"
+colnames(e)[10] <- "area"
+colnames(e)[11] <- "tbl"
+colnames(e)[12] <- "par"
+colnames(e)[13] <- "Fallow"
+colnames(e)[14] <- "Tree"
+colnames(e)[15] <- "Irrig"
+colnames(e)[20] <- "crop_diver"
+colnames(e)[2] <- "Year"
+colnames(e)[22] <- "Treatment"
 
 e$Cover<-scale(e$Cover)
+e$Cover_sq<-scale(I(e$Cover^2))
 e$Height<-scale(e$Height)
+e$Height_sq<-scale(I(e$Height^2))
 e$biom<-scale(e$biom)
 e$Cover_dead<-scale(e$Cover_dead)
 e$Heter<-scale(e$Heter)
@@ -183,56 +254,103 @@ e$tbl<-scale(e$tbl)
 e$par<-scale(e$par)
 e$Fallow<-scale(e$Fallow)
 e$Irrig<-scale(e$Irrig)
+e$Tree<-scale(e$Tree)
+e$crop_diver<-scale(e$crop_diver)
+e$area <- scale(e$area)
+
 
 e$Pres[e$Pres > 1] <- 1 # Binomial response
+
+#Check correlations
+g <- e[ ,c(4:7,9:15, 17:20)]
+cor(g, use = "complete.obs") #Crop_diver - Tree: 0.66 (Quitar Tree?)
+#LAI_sd - SAI_sd: 0.57 (quitar SAI)
 
 
 #PATH ANALYSIS
 e <- na.omit(e)
 
-# Random intercept Year
+# Random intercept zone
 e.list1 <- list( 
-  lmer( Cover ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( Cover_dead ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( Height ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( Heter ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( Diver ~ Treatment + (1|Year), na.action = na.omit, data = e),
+  lmer( Cover ~ Treatment + (1|Zone), data = e),
+  lmer( Cover_dead ~ Treatment + (1|Zone), data = e),
+  lmer( Height ~ Treatment + (1|Zone), data = e),
+  lmer( Heter ~ Treatment + (1|Zone), data = e),
+  lmer( Diver ~ Treatment + (1|Zone), data = e),
   
-  lmer( biom ~ Treatment + Fallow + Irrig + par + tbl + Cover + Height + Cover_dead 
-        + Heter + Diver + LAI_sd + (1|Year), na.action = na.omit, data = e),
-  lmer( SAI_sd ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( LAI_sd ~ Treatment + (1|Year), na.action = na.omit, data = e),
+  lmer( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
+          Cover + Height + Cover_dead + Heter + Diver + LAI_sd + (1|Zone), data = e),
+  lmer( LAI_sd ~ Treatment + Cover + Height + (1|Zone), data = e),
   
-  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + SAI_sd + LAI_sd
-         + Fallow + Irrig + par + tbl + (1|Year), na.action = na.omit, family = "binomial"(link = "logit"), data = e))
+  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+           LAI_sd + Fallow + crop_diver + par + tbl + area + (1|Zone), 
+         family = "binomial"(link = "logit"), data = e))
 
-e.fit1 <- sem.fit(e.list1, e) 
+e.fit1 <- sem.fit(e.list1, e) # AIC = 630
 
-# DEFINE BASIS SET WITH RANDOM YEAR
-
+# Random intercept Year
 e.list2 <- list( 
-  lmer( Cover ~ Treatment + par + (1|Year), na.action = na.omit, data = e),
-  lmer( Cover_dead ~ Treatment + Fallow + par + (1|Year), na.action = na.omit, data = e),
-  lmer( Height ~ Treatment + Cover + (1|Year), na.action = na.omit, data = e),
-  lmer( Heter ~ Treatment + Cover_dead + Height + (1|Year), na.action = na.omit, data = e),
-  lmer( Diver ~ Treatment + par + Cover + Cover_dead + (1|Year), na.action = na.omit, data = e),
+  lmer( Cover ~ Treatment + (1|Year), data = e),
+  lmer( Cover_dead ~ Treatment + (1|Year), data = e),
+  lmer( Height ~ Treatment + (1|Year), data = e),
+  lmer( Heter ~ Treatment + (1|Year), data = e),
+  lmer( Diver ~ Treatment + (1|Year), data = e),
   
-  lmer( biom ~ Treatment + Fallow + Irrig + par + tbl + Cover + Height + Cover_dead 
-        + Heter + Diver + LAI_sd + (1|Year), na.action = na.omit, data = e),
-  lmer( SAI_sd ~ Treatment + par + Cover + Cover_dead + Height + Diver + LAI_sd + (1|Year), na.action = na.omit, data = e),
-  lmer( LAI_sd ~ Treatment + par + Cover + Height + Diver + (1|Year), na.action = na.omit, data = e),
+  lmer( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
+          Cover + Height + Cover_dead + Heter + Diver + LAI_sd + (1|Year), data = e),
+  lmer( LAI_sd ~ Treatment + Cover + Height + (1|Year), data = e),
   
-  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + SAI_sd + LAI_sd
-         + Fallow + Irrig + par + tbl + (1|Year), na.action = na.omit, family = "binomial"(link = "logit"), data = e))
+  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+           LAI_sd + Fallow + crop_diver + par + tbl + area + (1|Year), 
+         family = "binomial"(link = "logit"), data = e))
 
-e.fit2 <- sem.fit(e.list2, e) 
-e.coefs2 <- sem.coefs(e.list2,e)
+e.fit2 <- sem.fit(e.list2, e) # AIC = 625
 
-setwd("~/Path analysis/Path_species")
-pdf(file = "Terax_P.pdf")
+
+# Random intercept Zone + Year
+e.list3 <- list( 
+  lmer( Cover ~ Treatment + (1|Year) + (1|Zone), data = e),
+  lmer( Cover_dead ~ Treatment + (1|Year) + (1|Zone), data = e),
+  lmer( Height ~ Treatment + (1|Year) + (1|Zone), data = e),
+  lmer( Heter ~ Treatment + (1|Year) + (1|Zone), data = e),
+  lmer( Diver ~ Treatment + (1|Year) + (1|Zone), data = e),
+  
+  lmer( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
+          Cover + Height + Cover_dead + Heter + Diver + LAI_sd + (1|Year) + (1|Zone), data = e),
+  lmer( LAI_sd ~ Treatment + Cover + Height + (1|Year) + (1|Zone), data = e),
+  
+  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+           LAI_sd + Fallow + crop_diver + par + tbl + area + (1|Year) + (1|Zone), 
+         family = "binomial"(link = "logit"), data = e))
+
+e.fit3 <- sem.fit(e.list3, e) # AIC = 624
+
+# DEFINE BASIS SET YEAR + ZONE: Model with only directed path doesnt fit the data. Include missing paths and correlated errors
+
+e.list4 <- list( 
+  lmer( Cover ~ Treatment + par + area + Fallow + (1|Year) + (1|Zone), data = e),
+  lmer( Cover_dead ~ Treatment + Fallow + par + area + Cover + (1|Year) + (1|Zone), data = e),
+  lmer( Height ~ Treatment + Fallow + Cover + par + (1|Year) + (1|Zone), data = e),
+  lmer( Heter ~ Treatment + crop_diver + tbl + Cover + Cover_dead + Height + (1|Year) + (1|Zone), data = e),
+  lmer( Diver ~ Treatment + par + area + Cover + Cover_dead + (1|Year) + (1|Zone), data = e),
+  
+  lmer( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
+          Cover + Height + Cover_dead + Heter + Diver + LAI_sd + (1|Year) + (1|Zone), data = e),
+  lmer( LAI_sd ~ Treatment + Cover + Height + par + area + Diver + tbl + Fallow + (1|Year) + (1|Zone), data = e),
+  
+  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+           LAI_sd + Fallow + crop_diver + par + tbl + area + (1|Year) + (1|Zone), 
+         family = "binomial"(link = "logit"), data = e))
+
+
+e.fit4 <- sem.fit(e.list4, e) # AIC = 213
+e.coefs4 <- sem.coefs(e.list4,e)
+
+setwd("~/First chapter/Path analysis/Results")
+pdf(file = "Terax_S.pdf")
 par(mar=c(1,1,1,1))
 
-PlotPath(e.coefs2
+PlotPath(e.coefs4
          ,cex.text =0.6
          ,cex.text1 = 0.75
          ,offset.poly = 2
@@ -242,7 +360,7 @@ PlotPath(e.coefs2
          ,col.pos="blue"
          ,col.neg="red"
          ,col.non.signifi="grey"
-         ,Treatment.name= "PICAR"
+         ,Treatment.name= "SHREDDING"
          ,Species.name="PRESENCE \n TERAX"
          ,cex.category = 0.5
          ,plot.axis=FALSE
@@ -255,12 +373,10 @@ dev.off()
 
 e <- f[ , which(colnames(f) %in% c("CF_A", "Contatge", "Recob_plotViu", "Recob_plotMort","lev_ind", "Simpson", # All variables
                                    "PromigAltura1Plot", "biom", "SAI_sd","LAI_sd", "TBL_500", "PAR_500","Fallow_500", 
-                                   "Irri_500","Zone", "Tractament", "Any", "Codi_Finca"))]
-
-e <- e[ ,c(3:18,1,2)]
+                                   "Irri_500", "Tree_500", "shan_500", "Zone", "Tractament", "Any", "Codi_Finca", "area"))]
 
 
-e <-e[-which(duplicated(e[ , 1])), ]
+e <-e[-which(duplicated(e[ , 8])), ] #Modify adding good duplicates!
 
 e$Tractament[which(e$Tractament == "Curronar")] <- "Llaurar" 
 e <- e[ which(e$Tractament %in% c("Control", "Llaurar")), ] 
@@ -271,22 +387,37 @@ e <- e %>%
   spread(Tractament, new, fill = 0) #Create dummy variable for treatment
 
 
-colnames(e)[2] <- "Pres"
-colnames(e)[3] <- "Cover"
-colnames(e)[4] <- "Cover_dead"
-colnames(e)[5] <- "Height"
-colnames(e)[6] <- "Diver"
-colnames(e)[7] <- "Heter"
-colnames(e)[8] <- "tbl"
-colnames(e)[9] <- "par"
-colnames(e)[10] <- "Fallow"
-colnames(e)[11] <- "Irrig"
-colnames(e)[16] <- "Field"
-colnames(e)[17] <- "Year"
-colnames(e)[19] <- "Treatment"
+length(which(e$Zone == "OCCIDENTAL" & e$`Picar i herbicidar` == "1"))
+length(which(e$Zone == "ORIENTAL" & e$`Picar i herbicidar` == "1"))
+length(which(e$Zone == "OCCIDENTAL")) # 178 #Possibility to add ZONE?SI
+length(which(e$Zone == "ORIENTAL")) #302
+
+e$Zone <- as.character(e$Zone)
+e$Zone[which(e$Zone == "OCCIDENTAL")] <- 0
+e$Zone[which(e$Zone == "ORIENTAL")] <- 1
+e$Zone <- as.factor(e$Zone)
+
+
+colnames(e)[3] <- "Pres"
+colnames(e)[4] <- "Cover"
+colnames(e)[5] <- "Cover_dead"
+colnames(e)[6] <- "Height"
+colnames(e)[7] <- "Diver"
+colnames(e)[9] <- "Heter"
+colnames(e)[10] <- "area"
+colnames(e)[11] <- "tbl"
+colnames(e)[12] <- "par"
+colnames(e)[13] <- "Fallow"
+colnames(e)[14] <- "Tree"
+colnames(e)[15] <- "Irrig"
+colnames(e)[20] <- "crop_diver"
+colnames(e)[2] <- "Year"
+colnames(e)[22] <- "Treatment"
 
 e$Cover<-scale(e$Cover)
+e$Cover_sq<-scale(I(e$Cover^2))
 e$Height<-scale(e$Height)
+e$Height_sq<-scale(I(e$Height^2))
 e$biom<-scale(e$biom)
 e$Cover_dead<-scale(e$Cover_dead)
 e$Heter<-scale(e$Heter)
@@ -295,55 +426,102 @@ e$tbl<-scale(e$tbl)
 e$par<-scale(e$par)
 e$Fallow<-scale(e$Fallow)
 e$Irrig<-scale(e$Irrig)
+e$Tree<-scale(e$Tree)
+e$crop_diver<-scale(e$crop_diver)
+e$area <- scale(e$area)
+
 
 e$Pres[e$Pres > 1] <- 1 # Binomial response
+
+#Check correlations
+g <- e[ ,c(4:7,9:15, 17:20)]
+cor(g, use = "complete.obs") #Crop_diver - Tree: 0.66 (Quitar Tree?)
+#LAI_sd - SAI_sd: 0.57 (quitar SAI)
+
 
 #PATH ANALYSIS
 e <- na.omit(e)
 
-# Random intercept Year
+# Random intercept zone
 e.list1 <- list( 
-  lmer( Cover ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( Cover_dead ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( Height ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( Heter ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( Diver ~ Treatment + (1|Year), na.action = na.omit, data = e),
+  lmer( Cover ~ Treatment + (1|Zone), data = e),
+  lmer( Cover_dead ~ Treatment + (1|Zone), data = e),
+  lmer( Height ~ Treatment + (1|Zone), data = e),
+  lmer( Heter ~ Treatment + (1|Zone), data = e),
+  lmer( Diver ~ Treatment + (1|Zone), data = e),
   
-  lmer( biom ~ Treatment + Fallow + Irrig + par + tbl + Cover + Height + Cover_dead 
-        + Heter + Diver + LAI_sd + (1|Year), na.action = na.omit, data = e),
-  lmer( SAI_sd ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( LAI_sd ~ Treatment + (1|Year), na.action = na.omit, data = e),
+  lmer( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
+          Cover + Height + Cover_dead + Heter + Diver + LAI_sd + (1|Zone), data = e),
+  lmer( LAI_sd ~ Treatment + Cover + Height + (1|Zone), data = e),
   
-  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + SAI_sd + LAI_sd
-         + Fallow + Irrig + par + tbl + (1|Year), na.action = na.omit, family = "binomial"(link = "logit"), data = e))
+  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+           LAI_sd + Fallow + crop_diver + par + tbl + area + (1|Zone), 
+         family = "binomial"(link = "logit"), data = e))
 
-e.fit1 <- sem.fit(e.list1, e) 
+e.fit1 <- sem.fit(e.list1, e) # AIC = 676
 
-# DEFINE BASIS SET WITH RANDOM YEAR
-
+# Random intercept Year
 e.list2 <- list( 
-  lmer( Cover ~ Treatment + Fallow + par + (1|Year), na.action = na.omit, data = e),
-  lmer( Cover_dead ~ Treatment + Fallow + par + (1|Year), na.action = na.omit, data = e),
-  lmer( Height ~ Treatment + Cover + (1|Year), na.action = na.omit, data = e),
-  lmer( Heter ~ Treatment + Cover_dead + Height + (1|Year), na.action = na.omit, data = e),
-  lmer( Diver ~ Treatment + par + Cover + Cover_dead + (1|Year), na.action = na.omit, data = e),
+  lmer( Cover ~ Treatment + (1|Year), data = e),
+  lmer( Cover_dead ~ Treatment + (1|Year), data = e),
+  lmer( Height ~ Treatment + (1|Year), data = e),
+  lmer( Heter ~ Treatment + (1|Year), data = e),
+  lmer( Diver ~ Treatment + (1|Year), data = e),
   
-  lmer( biom ~ Treatment + Fallow + Irrig + par + tbl + Cover + Height + Cover_dead 
-        + Heter + Diver + LAI_sd + (1|Year), na.action = na.omit, data = e),
-  lmer( SAI_sd ~ Treatment + par + Cover + Cover_dead + Height + Diver + LAI_sd + (1|Year), na.action = na.omit, data = e),
-  lmer( LAI_sd ~ Treatment + par + Cover + Height + Diver + (1|Year), na.action = na.omit, data = e),
+  lmer( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
+          Cover + Height + Cover_dead + Heter + Diver + LAI_sd + (1|Year), data = e),
+  lmer( LAI_sd ~ Treatment + Cover + Height + (1|Year), data = e),
   
-  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + SAI_sd + LAI_sd
-         + Fallow + Irrig + par + tbl + (1|Year), na.action = na.omit, family = "binomial"(link = "logit"), data = e))
+  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+           LAI_sd + Fallow + crop_diver + par + tbl + area + (1|Year), 
+         family = "binomial"(link = "logit"), data = e))
 
-e.fit2 <- sem.fit(e.list2, e) 
-e.coefs2 <- sem.coefs(e.list2,e)
+e.fit2 <- sem.fit(e.list2, e) # AIC = 700
 
-setwd("~/Path analysis/Path_species")
-pdf(file = "Terax_L.pdf")
+
+# Random intercept Zone + Year
+e.list3 <- list( 
+  lmer( Cover ~ Treatment + (1|Year) + (1|Zone), data = e),
+  lmer( Cover_dead ~ Treatment + (1|Year) + (1|Zone), data = e),
+  lmer( Height ~ Treatment + (1|Year) + (1|Zone), data = e),
+  lmer( Heter ~ Treatment + (1|Year) + (1|Zone), data = e),
+  lmer( Diver ~ Treatment + (1|Year) + (1|Zone), data = e),
+  
+  lmer( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
+          Cover + Height + Cover_dead + Heter + Diver + LAI_sd + (1|Year) + (1|Zone), data = e),
+  lmer( LAI_sd ~ Treatment + Cover + Height + (1|Year) + (1|Zone), data = e),
+  
+  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+           LAI_sd + Fallow + crop_diver + par + tbl + area + (1|Year) + (1|Zone), 
+         family = "binomial"(link = "logit"), data = e))
+
+e.fit3 <- sem.fit(e.list3, e) # AIC = 657
+
+# DEFINE BASIS SET YEAR + ZONE: Model with only directed path doesnt fit the data. Include missing paths and correlated errors
+
+e.list4 <- list( 
+  lmer( Cover ~ Treatment + par + area + Fallow + (1|Year) + (1|Zone), data = e),
+  lmer( Cover_dead ~ Treatment + Fallow + par + Cover + (1|Year) + (1|Zone), data = e),
+  lmer( Height ~ Treatment + Fallow + Cover + par + (1|Year) + (1|Zone), data = e),
+  lmer( Heter ~ Treatment + crop_diver + par + Cover_dead + Height + (1|Year) + (1|Zone), data = e),
+  lmer( Diver ~ Treatment + par + Cover + Cover_dead + Height + area + (1|Year) + (1|Zone), data = e),
+  
+  lmer( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
+          Cover + Height + Cover_dead + Heter + Diver + LAI_sd + (1|Year) + (1|Zone), data = e),
+  lmer( LAI_sd ~ Treatment + Cover + Height + par + area + Diver + Fallow + tbl + Cover_dead + (1|Year) + (1|Zone), data = e),
+  
+  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+           LAI_sd + Fallow + crop_diver + par + tbl + area + (1|Year) + (1|Zone), 
+         family = "binomial"(link = "logit"), data = e))
+
+e.fit4 <- sem.fit(e.list4, e) 
+e.coefs4 <- sem.coefs(e.list4,e)
+
+setwd("~/First chapter/Path analysis/Results")
+pdf(file = "Terax_T.pdf")
 par(mar=c(1,1,1,1))
 
-PlotPath(e.coefs2
+PlotPath(e.coefs4
          ,cex.text =0.6
          ,cex.text1 = 0.75
          ,offset.poly = 2
@@ -353,7 +531,7 @@ PlotPath(e.coefs2
          ,col.pos="blue"
          ,col.neg="red"
          ,col.non.signifi="grey"
-         ,Treatment.name= "LABRAR"
+         ,Treatment.name= "TILLAGE"
          ,Species.name="PRESENCE \n TERAX"
          ,cex.category = 0.5
          ,plot.axis=FALSE
@@ -362,19 +540,18 @@ PlotPath(e.coefs2
          digits.estimate = 2)
 dev.off()
 
+
+
 ################################### ALFALFA ###############################################
 
 e <- f[ , which(colnames(f) %in% c("CF_A", "Contatge", "Recob_plotViu", "Recob_plotMort","lev_ind", "Simpson", # All variables
                                    "PromigAltura1Plot", "biom", "SAI_sd","LAI_sd", "TBL_500", "PAR_500","Fallow_500", 
-                                   "Irri_500","Zone", "Tractament", "Any", "Codi_Finca"))]
-
-e <- e[ ,c(3:18,1,2)]
+                                   "Irri_500", "Tree_500", "shan_500", "Zone", "Tractament", "Any", "Codi_Finca", "area"))]
 
 
-e <-e[-which(duplicated(e[ , 1])), ]
+e <-e[-which(duplicated(e[ , 8])), ] #Modify adding good duplicates!
 
 e <- e[ which(e$Tractament %in% c("Control", "Alfals")), ] #Select treatment
-
 
 e <- e %>% 
   unnest(Tractament) %>% 
@@ -382,22 +559,37 @@ e <- e %>%
   spread(Tractament, new, fill = 0) #Create dummy variable for treatment
 
 
-colnames(e)[2] <- "Pres"
-colnames(e)[3] <- "Cover"
-colnames(e)[4] <- "Cover_dead"
-colnames(e)[5] <- "Height"
-colnames(e)[6] <- "Diver"
-colnames(e)[7] <- "Heter"
-colnames(e)[8] <- "tbl"
-colnames(e)[9] <- "par"
-colnames(e)[10] <- "Fallow"
-colnames(e)[11] <- "Irrig"
-colnames(e)[16] <- "Field"
-colnames(e)[17] <- "Year"
-colnames(e)[19] <- "Treatment"
+length(which(e$Zone == "OCCIDENTAL" & e$`Picar i herbicidar` == "1"))
+length(which(e$Zone == "ORIENTAL" & e$`Picar i herbicidar` == "1"))
+length(which(e$Zone == "OCCIDENTAL")) # 178 #Possibility to add ZONE?SI
+length(which(e$Zone == "ORIENTAL")) #302
+
+e$Zone <- as.character(e$Zone)
+e$Zone[which(e$Zone == "OCCIDENTAL")] <- 0
+e$Zone[which(e$Zone == "ORIENTAL")] <- 1
+e$Zone <- as.factor(e$Zone)
+
+
+colnames(e)[3] <- "Pres"
+colnames(e)[4] <- "Cover"
+colnames(e)[5] <- "Cover_dead"
+colnames(e)[6] <- "Height"
+colnames(e)[7] <- "Diver"
+colnames(e)[9] <- "Heter"
+colnames(e)[10] <- "area"
+colnames(e)[11] <- "tbl"
+colnames(e)[12] <- "par"
+colnames(e)[13] <- "Fallow"
+colnames(e)[14] <- "Tree"
+colnames(e)[15] <- "Irrig"
+colnames(e)[20] <- "crop_diver"
+colnames(e)[2] <- "Year"
+colnames(e)[22] <- "Treatment"
 
 e$Cover<-scale(e$Cover)
+e$Cover_sq<-scale(I(e$Cover^2))
 e$Height<-scale(e$Height)
+e$Height_sq<-scale(I(e$Height^2))
 e$biom<-scale(e$biom)
 e$Cover_dead<-scale(e$Cover_dead)
 e$Heter<-scale(e$Heter)
@@ -406,56 +598,102 @@ e$tbl<-scale(e$tbl)
 e$par<-scale(e$par)
 e$Fallow<-scale(e$Fallow)
 e$Irrig<-scale(e$Irrig)
+e$Tree<-scale(e$Tree)
+e$crop_diver<-scale(e$crop_diver)
+e$area <- scale(e$area)
+
 
 e$Pres[e$Pres > 1] <- 1 # Binomial response
+
+#Check correlations
+g <- e[ ,c(4:7,9:15, 17:20)]
+cor(g, use = "complete.obs") #Crop_diver - Tree: 0.66 (Quitar Tree?)
+#LAI_sd - SAI_sd: 0.57 (quitar SAI)
+
 
 #PATH ANALYSIS
 e <- na.omit(e)
 
+# Random intercept zone
+e.list1 <- list( 
+  lmer( Cover ~ Treatment + (1|Zone), data = e),
+  lmer( Cover_dead ~ Treatment + (1|Zone), data = e),
+  lmer( Height ~ Treatment + (1|Zone), data = e),
+  lmer( Heter ~ Treatment + (1|Zone), data = e),
+  lmer( Diver ~ Treatment + (1|Zone), data = e),
+  
+  lmer( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
+          Cover + Height + Cover_dead + Heter + Diver + LAI_sd + (1|Zone), data = e),
+  lmer( LAI_sd ~ Treatment + Cover + Height + (1|Zone), data = e),
+  
+  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+           LAI_sd + Fallow + crop_diver + par + tbl + area + (1|Zone), 
+         family = "binomial"(link = "logit"), data = e))
+
+e.fit1 <- sem.fit(e.list1, e) # AIC = 764
 
 # Random intercept Year
-e.list1 <- list( 
-  lmer( Cover ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( Cover_dead ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( Height ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( Heter ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( Diver ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  
-  lmer( biom ~ Treatment + Fallow + Irrig + par + tbl + Cover + Height + Cover_dead 
-        + Heter + Diver + LAI_sd + (1|Year), na.action = na.omit, data = e),
-  lmer( SAI_sd ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  lmer( LAI_sd ~ Treatment + (1|Year), na.action = na.omit, data = e),
-  
-  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + SAI_sd + LAI_sd
-         + Fallow + Irrig + par + tbl + (1|Year), na.action = na.omit, family = "binomial"(link = "logit"), data = e))
-
-e.fit1 <- sem.fit(e.list1, e) 
-
-# DEFINE BASIS SET WITH RANDOM YEAR
-
 e.list2 <- list( 
-  lmer( Cover ~ Treatment + Fallow + par + (1|Year), na.action = na.omit, data = e),
-  lmer( Cover_dead ~ Treatment + Fallow + par + tbl + (1|Year), na.action = na.omit, data = e),
-  lmer( Height ~ Treatment + Fallow + Cover + (1|Year), na.action = na.omit, data = e),
-  lmer( Heter ~ Treatment + Cover_dead + Height + (1|Year), na.action = na.omit, data = e),
-  lmer( Diver ~ Treatment + par + Cover + Cover_dead + (1|Year), na.action = na.omit, data = e),
+  lmer( Cover ~ Treatment + (1|Year), data = e),
+  lmer( Cover_dead ~ Treatment + (1|Year), data = e),
+  lmer( Height ~ Treatment + (1|Year), data = e),
+  lmer( Heter ~ Treatment + (1|Year), data = e),
+  lmer( Diver ~ Treatment + (1|Year), data = e),
   
-  lmer( biom ~ Treatment + Fallow + Irrig + par + tbl + Cover + Height + Cover_dead 
-        + Heter + Diver + LAI_sd + (1|Year), na.action = na.omit, data = e),
-  lmer( SAI_sd ~ Treatment + par + Cover + Cover_dead + Height + Diver + LAI_sd + (1|Year), na.action = na.omit, data = e),
-  lmer( LAI_sd ~ Treatment + par + Cover + Height + Diver + (1|Year), na.action = na.omit, data = e),
+  lmer( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
+          Cover + Height + Cover_dead + Heter + Diver + LAI_sd + (1|Year), data = e),
+  lmer( LAI_sd ~ Treatment + Cover + Height + (1|Year), data = e),
   
-  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + SAI_sd + LAI_sd
-         + Fallow + Irrig + par + tbl + (1|Year), na.action = na.omit, family = "binomial"(link = "logit"), data = e))
+  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+           LAI_sd + Fallow + crop_diver + par + tbl + area + (1|Year), 
+         family = "binomial"(link = "logit"), data = e))
 
-e.fit2 <- sem.fit(e.list2, e) 
-e.coefs2 <- sem.coefs(e.list2,e)
+e.fit2 <- sem.fit(e.list2, e) # AIC = 758
+
+
+# Random intercept Zone + Year
+e.list3 <- list( 
+  lmer( Cover ~ Treatment + (1|Year) + (1|Zone), data = e),
+  lmer( Cover_dead ~ Treatment + (1|Year) + (1|Zone), data = e),
+  lmer( Height ~ Treatment + (1|Year) + (1|Zone), data = e),
+  lmer( Heter ~ Treatment + (1|Year) + (1|Zone), data = e),
+  lmer( Diver ~ Treatment + (1|Year) + (1|Zone), data = e),
+  
+  lmer( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
+          Cover + Height + Cover_dead + Heter + Diver + LAI_sd + (1|Year) + (1|Zone), data = e),
+  lmer( LAI_sd ~ Treatment + Cover + Height + (1|Year) + (1|Zone), data = e),
+  
+  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+           LAI_sd + Fallow + crop_diver + par + tbl + area + (1|Year) + (1|Zone), 
+         family = "binomial"(link = "logit"), data = e))
+
+e.fit3 <- sem.fit(e.list3, e) # AIC = 769
+
+# DEFINE BASIS SET YEAR + ZONE: Model with only directed path doesnt fit the data. Include missing paths and correlated errors
+
+e.list4 <- list( 
+  lmer( Cover ~ Treatment +  par + area + Fallow + (1|Year) + (1|Zone), data = e),
+  lmer( Cover_dead ~ Treatment + Fallow + par + tbl + area + Cover + (1|Year) + (1|Zone), data = e),
+  lmer( Height ~ Treatment + Fallow + Cover + Cover_dead + (1|Year) + (1|Zone), data = e),
+  lmer( Heter ~ Treatment + Cover_dead + Height + Cover + (1|Year) + (1|Zone), data = e),
+  lmer( Diver ~ Treatment + par + area + Cover + Cover_dead + (1|Year) + (1|Zone), data = e),
+  
+  lmer( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
+          Cover + Height + Cover_dead + Heter + Diver + LAI_sd + (1|Year) + (1|Zone), data = e),
+  lmer( LAI_sd ~ Treatment + Cover + Height +  par + area + Diver + Fallow + tbl + (1|Year) + (1|Zone), data = e),
+  
+  glmer( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+           LAI_sd + Fallow + crop_diver + par + tbl + area + (1|Year) + (1|Zone), 
+         family = "binomial"(link = "logit"), data = e))
+
+e.fit4 <- sem.fit(e.list4, e) # AIC = 769
+e.coefs4 <- sem.coefs(e.list4,e)
 
 setwd("~/Path analysis/Path_species")
 pdf(file = "Terax_A.pdf")
 par(mar=c(1,1,1,1))
 
-PlotPath(e.coefs2
+PlotPath(e.coefs4
          ,cex.text =0.6
          ,cex.text1 = 0.75
          ,offset.poly = 2
