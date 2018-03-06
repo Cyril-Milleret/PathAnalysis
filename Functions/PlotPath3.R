@@ -1,3 +1,4 @@
+
 #No direct arrow; + field area; - LAI (PARA ALCARAVÁN Y CALANDRIA)
 
 PlotPath <- function(e.coefs
