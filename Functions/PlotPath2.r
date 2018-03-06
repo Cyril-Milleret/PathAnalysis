@@ -36,10 +36,8 @@ PlotPath <- function(e.coefs
                      digits.estimate = 1
                      )
 {
-  print("##########")
 
-  readline(prompt="By Pressing [enter], it will automatically add 10 besos on Cyril's account ")
-  
+
 require(sp)  
 
   grid.size.max <- 40
@@ -177,11 +175,11 @@ require(sp)
   tbl=cbind(c(40,54,54,40), c(-4,-4,0,0))
   par=cbind(c(40,54,54,40), c(-10,-10,-6,-6))
   Fallow=cbind(c(40,54,54,40), c(-16,-16,-12,-12))
-  Irrig=cbind(c(40,54,54,40), c(-22,-22,-18,-18))
+  crop_diver=cbind(c(40,54,54,40), c(-22,-22,-18,-18))
   area=cbind(c(51,69,69,51), c(52,52,56,56))
   
   
-  landscape= rbind(tbl,par,Fallow,Irrig)
+  landscape= rbind(tbl,par,Fallow,crop_diver)
   min1 <- min(landscape[,1])-offset.poly
   min2 <- min(landscape[,2])-offset.poly
   max1 <- max(landscape[,1])+offset.poly
@@ -204,8 +202,8 @@ require(sp)
   polygon(Fallow[,1], Fallow[,2], col =  adjustcolor("brown",alpha.f = 0.5), border = "white")
   text(mean(Fallow[,1]),mean(Fallow[,2]), "FALLOW", cex = cex.text)
   
-  polygon(Irrig[,1], Irrig[,2], col =  adjustcolor("brown",alpha.f = 0.5), border = "white")
-  text(mean(Irrig[,1]),mean(Irrig[,2]), "IRRIGATION", cex = cex.text)
+  polygon(crop_diver[,1], crop_diver[,2], col =  adjustcolor("brown",alpha.f = 0.5), border = "white")
+  text(mean(crop_diver[,1]),mean(crop_diver[,2]), "CROP DIVERSITY", cex = cex.text)
   
   polygon(area[,1], area[,2], col =  adjustcolor("yellow",alpha.f = 0.5), border = "white")
   text(mean(area[,1]),mean(area[,2]), "FIELD AREA", cex = cex.text)
@@ -217,7 +215,7 @@ require(sp)
   predictors <- c( rep("Treatment", 8),
                    "Diver", "Heter", "Height", "Cover", "Cover_dead",
                    "Diver", "Heter", "Height", "Cover", "Cover_dead",
-                   "tbl","par","Fallow","Irrig",
+                   "tbl","par","Fallow","crop_diver",
                    "SAI_sd", "LAI_sd", "biom",
                    "LAI_sd", 
                    "area")
@@ -233,7 +231,7 @@ require(sp)
   x0= c(rep(mean(Treatment[c(1:2),1]),8),
         mean(Diver[c(2),1]), mean(Heter[c(2),1]), mean(Height[c(2),1]), mean(Cover[c(2),1]), mean(Cover_dead[c(2),1]),
         mean(Diver1[c(2),1]), mean(Heter1[c(2),1]), mean(Height1[c(2),1]), mean(Cover1[c(2),1]), mean(Cover_dead1[c(2),1]),
-        mean(tbl[c(1),1]), mean(par[c(1),1]), mean(Fallow[c(1),1]), mean(Irrig[c(1),1]),
+        mean(tbl[c(1),1]), mean(par[c(1),1]), mean(Fallow[c(1),1]), mean(crop_diver[c(1),1]),
         SAI_sd[3,1], LAI_sd[3,1], biom[3,1],
         mean(LAI_sd[1:2,1]),
         mean(area[1:2,1]))
@@ -250,7 +248,7 @@ require(sp)
         mean(Treatment[3,2]),mean(Treatment[3,2]),mean(Treatment[3,2]),mean(Treatment[3,2]),mean(Treatment[3,2]),
         mean(Diver[3:2,2]), mean(Heter[3:2,2]), mean(Height[3:2,2]), mean(Cover[3:2,2]), mean(Cover_dead[3:2,2]),
         mean(Diver1[3:2,2]), mean(Heter1[3:2,2]), mean(Height1[3:2,2]), mean(Cover1[3:2,2]), mean(Cover_dead1[3:2,2]),
-        mean(tbl[3:2,2]), mean(par[3:2,2]), mean(Fallow[3:2,2]), mean(Irrig[3:2,2]),
+        mean(tbl[3:2,2]), mean(par[3:2,2]), mean(Fallow[3:2,2]), mean(crop_diver[3:2,2]),
         SAI_sd[3,2], LAI_sd[3,2], biom[3,2],
         LAI_sd[2,2],
         mean(area[2,2]) )
@@ -286,21 +284,21 @@ require(sp)
   }
   
   #NOW, ADD LANDSCAPE ARROWS
-  coeffs <- e.coefs[e.coefs$predictor== "Irrig" & e.coefs$response=="Pres"  ,]
+  coeffs <- e.coefs[e.coefs$predictor== "crop_diver" & e.coefs$response=="Pres"  ,]
   if(coeffs$p.value>significant){
-    arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+    arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(crop_diver[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
            lwd=1, col=col.non.signifi)
-    segments(x0=mean(Irrig[2,1]), x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Irrig[3:2,2]),
+    segments(x0=mean(crop_diver[2,1]), x1=mean(Pres[1:2,1])+6, y0=mean(crop_diver[3:2,2]), y1= mean(crop_diver[3:2,2]),
              lwd=1, col=col.non.signifi)
     
   }else{
-    arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+    arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(crop_diver[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
            lwd=2,
            col=ifelse(coeffs$estimate>0, col.pos, col.neg))
-    segments(x0=mean(Irrig[2,1]), x1=mean(Pres[1:2,1])+6, y0=mean(Irrig[3:2,2]), y1= mean(Irrig[3:2,2]),
+    segments(x0=mean(crop_diver[2,1]), x1=mean(Pres[1:2,1])+6, y0=mean(crop_diver[3:2,2]), y1= mean(crop_diver[3:2,2]),
              lwd=2,
              col=ifelse(coeffs$estimate>0, col.pos, col.neg))
-    text(mean(c(mean(Irrig[2,1]),mean(Pres[1:2,1])+6))  , mean(Irrig[3:2,2])+1.2, round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate)
+    text(mean(c(mean(crop_diver[2,1]),mean(Pres[1:2,1])+6))  , mean(crop_diver[3:2,2])+1.2, round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate)
     
   }
   
@@ -404,10 +402,8 @@ require(sp)
   # arrows(x0=mean(tbl[c(1),1]), x1=mean(biom[2,1]), y0=mean(tbl[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
   # arrows(x0=mean(par[c(1),1]), x1=mean(biom[2,1]), y0=mean(par[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
   # arrows(x0=mean(Fallow[c(1),1]), x1=mean(biom[2,1]), y0=mean(Fallow[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
-  # arrows(x0=mean(Irrig[c(1),1]), x1=mean(biom[2,1]), y0=mean(Irrig[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
+  # arrows(x0=mean(crop_diver[c(1),1]), x1=mean(biom[2,1]), y0=mean(crop_diver[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
   
-  print("BESOS SUCCESSFULLY ADDED")
-  print("GRACIAS!  <3")
   
   
 }
