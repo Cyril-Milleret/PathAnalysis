@@ -35,9 +35,9 @@ PlotPath <- function(e.coefs
                      ,
                      digits.estimate = 1
 )
-{
+
   
-  
+{  
   require(sp)  
   
   grid.size.max <- 40
@@ -379,7 +379,7 @@ PlotPath <- function(e.coefs
            col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.25), adjustcolor(col.neg,alpha.f = 0.25)))
     segments(x0=mean(par[2,1]), x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(par[3:2,2]),
              lwd= (abs(coeffs$estimate))*3, 
-             col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.25), adjustcolor(col.neg,alpha.f = 0.25)))
+             col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.25), adjustcolor(col.neg,alpha.f = 0.25))) }
     
     if ((0.05 < coeffs$p.value) & (coeffs$p.value < 0.10)){
     arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
@@ -417,7 +417,7 @@ PlotPath <- function(e.coefs
            col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.25), adjustcolor(col.neg,alpha.f = 0.25)))
     segments(x0=mean(tbl[2,1]), x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(tbl[3:2,2]),
              lwd= (abs(coeffs$estimate))*3, 
-             col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.25), adjustcolor(col.neg,alpha.f = 0.25)))
+             col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.25), adjustcolor(col.neg,alpha.f = 0.25)))}
     
   if ((0.05 < coeffs$p.value) & (coeffs$p.value < 0.10)){
     arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
@@ -444,7 +444,7 @@ PlotPath <- function(e.coefs
       segments(x0=mean(tbl[2,1]), x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(tbl[3:2,2]),
                lwd= (abs(coeffs$estimate))*3,
                col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 1), adjustcolor(col.neg,alpha.f = 1)))
-      text(mean(c(mean(tbl[2,1]),mean(Pres[1:2,1])-1))  , mean(tbl[3:2,2])+1.2, labels = paste(round(coeffs$estimate, digits = digits.estimate), "*"), cex=cex.estimate)}
+      text(mean(c(mean(tbl[2,1]),mean(Pres[1:2,1])-1))  , mean(tbl[3:2,2])+1.2, labels = paste(round(coeffs$estimate, digits = digits.estimate), "**"), cex=cex.estimate)}
     
   
   #REPEAT POLYGONS TO FIX OVERLAP WITH LINES
@@ -513,7 +513,7 @@ PlotPath <- function(e.coefs
   text(mean(crop_diver[,1]),mean(crop_diver[,2]), "CROP DIVERSITY", cex = cex.text)
   
   polygon(area[,1], area[,2], col =  adjustcolor("yellow",alpha.f = 1), border = "white")
-  text(mean(area[,1]),mean(area[,2]), "FIELD AREA", cex = cex.text)
+  text(mean(area[,1]),mean(area[,2]), "FIELD AREA", cex = cex.text) 
   
   
   
@@ -557,7 +557,7 @@ PlotPath <- function(e.coefs
   # arrows(x0=mean(Fallow[c(1),1]), x1=mean(biom[2,1]), y0=mean(Fallow[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
   # arrows(x0=mean(crop_diver[c(1),1]), x1=mean(biom[2,1]), y0=mean(crop_diver[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
   
+   }
   
-  
-}
+
 
