@@ -17,9 +17,9 @@ PlotPath <- function(e.coefs
                      ,
                      cex.category = 0.6          # Cex for the category (VEGETATION)
                      ,
-                     col.pos="red"               # color of positive arrows 
+                     col.pos="black"               # color of positive arrows 
                      ,
-                     col.neg="blue"              # color of negative arrows 
+                     col.neg="red"              # color of negative arrows 
                      ,
                      col.non.signifi="grey"      # color of non-significant arrows 
                      ,
@@ -66,11 +66,11 @@ PlotPath <- function(e.coefs
   # ==== I. DEFINE THE BASIC PATH STRUCTURE ==== # Define position of boxes
   # ---- 1. Treatment/ PRESENCE ---- 
   Treatment=cbind(c(-20,-6,-6,-20), c(16,16,23,23)) # 1st column X : bottomleft, bottom right, topright, topleft.# 2nd column Y
-  polygon(Treatment[,1], Treatment[,2], col =  adjustcolor("orange",alpha.f = 0.5), border = "white")
+  polygon(Treatment[,1], Treatment[,2], col =  adjustcolor("orange",alpha.f = 0.2), border = "white")
   text(mean(Treatment[,1]),mean(Treatment[,2]), Treatment.name, cex = cex.text1)
   
   Pres=cbind(c(51,69,69,51), c(16,16,23,23))
-  polygon(Pres[,1], Pres[,2], col =  adjustcolor("blue",alpha.f = 0.5), border = "white")
+  polygon(Pres[,1], Pres[,2], col =  adjustcolor("lightblue",alpha.f = 1), border = "white")
   text(mean(Pres[,1]),mean(Pres[,2]), Species.name, cex = cex.text1) 
   
   
@@ -88,15 +88,15 @@ PlotPath <- function(e.coefs
   
   polygon(c(min1,max1,max1,min1) ,
           c(min2,min2,max2,max2)  ,
-          col =  adjustcolor("purple",alpha.f = 0.1), border = "white")
+          col =  adjustcolor("mediumpurple1",alpha.f = 0.3), border = "white")
   text(mean(food[,1]),max(food[,2])+2 , "FOOD", col=grey(0.3), cex=cex.category)
   
   
-  polygon(SAI_sd[,1], SAI_sd[,2], col =  adjustcolor("purple",alpha.f = 0.5), border = "white")
+  polygon(SAI_sd[,1], SAI_sd[,2], col =  adjustcolor("mediumpurple1",alpha.f = 0.5), border = "white")
   text(mean(SAI_sd[,1]),mean(SAI_sd[,2]), "SAI", cex = cex.text)
   
   
-  polygon(biom[,1], biom[,2], col =  adjustcolor("purple",alpha.f = 0.5), border = "white")
+  polygon(biom[,1], biom[,2], col =  adjustcolor("mediumpurple1",alpha.f = 0.5), border = "white")
   text(mean(biom[,1]),mean(biom[,2]), "ORTHOPTERA", cex = cex.text)
   
   # ---- 3. VEGETATION  ---- 
@@ -114,23 +114,23 @@ PlotPath <- function(e.coefs
   
   polygon(c(min1,max1,max1,min1) ,
           c(min2,min2,max2,max2)  ,
-          col =  adjustcolor("green",alpha.f = 0.1), border = "white")
+          col =  adjustcolor("olivedrab3",alpha.f = 0.3), border = "white")
   text(mean(veg[,1]),max(veg[,2])+2 , "VEGETATION", col=grey(0.3), cex=cex.category)
   
   
-  polygon(Diver[,1], Diver[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
+  polygon(Diver[,1], Diver[,2], col =  adjustcolor("olivedrab3",alpha.f = 0.5), border = "white")
   text(mean(Diver[,1]),mean(Diver[,2]), "DIVERSITY", cex = cex.text)
   
-  polygon(Heter[,1], Heter[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
+  polygon(Heter[,1], Heter[,2], col =  adjustcolor("olivedrab3",alpha.f = 0.5), border = "white")
   text(mean(Heter[,1]),mean(Heter[,2]), "HETEROGENEITY", cex = cex.text)
   
-  polygon(Height[,1], Height[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
+  polygon(Height[,1], Height[,2], col =  adjustcolor("olivedrab3",alpha.f = 0.5), border = "white")
   text(mean(Height[,1]),mean(Height[,2]), "HEIGHT", cex = cex.text)
   
-  polygon(Cover[,1], Cover[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
+  polygon(Cover[,1], Cover[,2], col =  adjustcolor("olivedrab3",alpha.f = 0.5), border = "white")
   text(mean(Cover[,1]),mean(Cover[,2]), "COVER", cex = cex.text)
   
-  polygon(Cover_dead[,1], Cover_dead[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
+  polygon(Cover_dead[,1], Cover_dead[,2], col =  adjustcolor("olivedrab3",alpha.f = 1), border = "white")
   text(mean(Cover_dead[,1]),mean(Cover_dead[,2]), "COVER_DEAD", cex = cex.text)
   
   # ---- 4. VEGETATION  2 ---- 
@@ -149,23 +149,23 @@ PlotPath <- function(e.coefs
   
   polygon(c(min1,max1,max1,min1) ,
           c(min2,min2,max2,max2)  ,
-          col =  adjustcolor("green",alpha.f = 0.1), border = "white")
+          col =  adjustcolor("olivedrab3",alpha.f = 0.3), border = "white")
   text(mean(veg1[,1]),max(veg1[,2])+2 , "VEGETATION", col=grey(0.3), cex=cex.category)
   
   
-  polygon(Diver1[,1], Diver1[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
+  polygon(Diver1[,1], Diver1[,2], col =  adjustcolor("olivedrab3",alpha.f = 0.5), border = "white")
   text(mean(Diver1[,1]),mean(Diver1[,2]), "DIVERSITY", cex = cex.text)
   
-  polygon(Heter1[,1], Heter1[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
+  polygon(Heter1[,1], Heter1[,2], col =  adjustcolor("olivedrab3",alpha.f = 0.5), border = "white")
   text(mean(Heter1[,1]),mean(Heter1[,2]), "HETEROGENEITY", cex = cex.text)
   
-  polygon(Height1[,1], Height1[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
+  polygon(Height1[,1], Height1[,2], col =  adjustcolor("olivedrab3",alpha.f = 0.5), border = "white")
   text(mean(Height1[,1]),mean(Height1[,2]), "HEIGHT", cex = cex.text)
   
-  polygon(Cover1[,1], Cover1[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
+  polygon(Cover1[,1], Cover1[,2], col =  adjustcolor("olivedrab3",alpha.f = 0.5), border = "white")
   text(mean(Cover1[,1]),mean(Cover1[,2]), "COVER", cex = cex.text)
   
-  polygon(Cover_dead1[,1], Cover_dead1[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
+  polygon(Cover_dead1[,1], Cover_dead1[,2], col =  adjustcolor("olivedrab3",alpha.f = 0.5), border = "white")
   text(mean(Cover_dead1[,1]),mean(Cover_dead1[,2]), "COVER_DEAD", cex = cex.text)
   
   
@@ -186,21 +186,21 @@ PlotPath <- function(e.coefs
   
   polygon(c(min1,max1,max1,min1) ,
           c(min2,min2,max2,max2)  ,
-          col =  adjustcolor("brown",alpha.f = 0.1), border = "white")
+          col =  adjustcolor("navajowhite4",alpha.f = 0.3), border = "white")
   
   text(mean(landscape[,1]),max(landscape[,2])+2 , "LANDSCAPE", col=grey(0.3), cex=cex.category)
   
-  polygon(tbl[,1], tbl[,2], col =  adjustcolor("brown",alpha.f = 0.5), border = "white")
+  polygon(tbl[,1], tbl[,2], col =  adjustcolor("navajowhite4",alpha.f = 0.5), border = "white")
   text(mean(tbl[,1]),mean(tbl[,2]), "TBL", cex = cex.text)
   
   
-  polygon(par[,1], par[,2], col =  adjustcolor("brown",alpha.f = 0.5), border = "white")
+  polygon(par[,1], par[,2], col =  adjustcolor("navajowhite4",alpha.f = 0.5), border = "white")
   text(mean(par[,1]),mean(par[,2]), "PAR", cex = cex.text)
   
-  polygon(Fallow[,1], Fallow[,2], col =  adjustcolor("brown",alpha.f = 0.5), border = "white")
+  polygon(Fallow[,1], Fallow[,2], col =  adjustcolor("navajowhite4",alpha.f = 0.5), border = "white")
   text(mean(Fallow[,1]),mean(Fallow[,2]), "FALLOW", cex = cex.text)
   
-  polygon(crop_diver[,1], crop_diver[,2], col =  adjustcolor("brown",alpha.f = 0.5), border = "white")
+  polygon(crop_diver[,1], crop_diver[,2], col =  adjustcolor("navajowhite4",alpha.f = 0.5), border = "white")
   text(mean(crop_diver[,1]),mean(crop_diver[,2]), "CROP DIVERSITY", cex = cex.text)
   
   polygon(area[,1], area[,2], col =  adjustcolor("yellow",alpha.f = 0.5), border = "white")
@@ -243,7 +243,7 @@ PlotPath <- function(e.coefs
         mean(Diver[3:2,2]), mean(Heter[3:2,2]), mean(Height[3:2,2]), mean(Cover[3:2,2]), mean(Cover_dead[3:2,2]),
         mean(Diver1[3:2,2]), mean(Heter1[3:2,2]), mean(Height1[3:2,2]), mean(Cover1[3:2,2]), mean(Cover_dead1[3:2,2]),
         mean(tbl[3:2,2]), mean(par[3:2,2]), mean(Fallow[3:2,2]), mean(crop_diver[3:2,2]),
-        SAI_sd[3,2], biom[3,2],
+        mean(SAI_sd[3,2]), biom[3,2],
         mean(area[2,2]) )
   
   
@@ -264,14 +264,14 @@ PlotPath <- function(e.coefs
     #I am interested in (in the order of the arrows that
     # join predictor - response).
     if(coeffs$p.value < significant){ # If it is signifficant, draw the arrows with colors and place estimate in box
-      arrows(x0=x0[i], x1=x1[i], y0=y0[i], y1= y1[i],length = 0.1, lwd=2, col=ifelse(coeffs$estimate>0, col.pos, col.neg) )
+      arrows(x0=x0[i], x1=x1[i], y0=y0[i], y1= y1[i],length = 0.1, lwd= (abs(coeffs$estimate))*3, col=ifelse(coeffs$estimate>0, col.pos, col.neg) )
       polygon(c( mean(c(x0[i], x1[i]))-estimate.box.width[1], mean(c(x0[i], x1[i]))+estimate.box.width[1], mean(c(x0[i], x1[i]))+estimate.box.width[1] ,mean(c(x0[i], x1[i]))-estimate.box.width[1] ),
               c( mean(c(y0[i], y1[i]))-estimate.box.width[2], mean(c(y0[i], y1[i]))-estimate.box.width[2], mean(c(y0[i], y1[i]))+estimate.box.width[2], mean(c(y0[i], y1[i]))+estimate.box.width[2])
               ,col = "white", border="white")
       text(mean(c(x0[i], x1[i])) , mean(c(y0[i], y1[i])), round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate)
       
     }else{ #If it is not significant, put it grey and no box
-      arrows(x0=x0[i], x1=x1[i], y0=y0[i], y1= y1[i],length = 0.1, lwd=1, col=col.non.signifi )
+      arrows(x0=x0[i], x1=x1[i], y0=y0[i], y1= y1[i],length = 0.1, lwd= (abs(coeffs$estimate))*3, col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.4), adjustcolor(col.neg,alpha.f = 0.4)) ) 
     }
   }
   
@@ -279,17 +279,19 @@ PlotPath <- function(e.coefs
   coeffs <- e.coefs[e.coefs$predictor== "crop_diver" & e.coefs$response=="Pres"  ,]
   if(coeffs$p.value>significant){
     arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(crop_diver[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
-           lwd=1, col=col.non.signifi)
+           lwd= (abs(coeffs$estimate))*3, 
+           col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.4), adjustcolor(col.neg,alpha.f = 0.4)))
     segments(x0=mean(crop_diver[2,1]), x1=mean(Pres[1:2,1])+6, y0=mean(crop_diver[3:2,2]), y1= mean(crop_diver[3:2,2]),
-             lwd=1, col=col.non.signifi)
+             lwd= (abs(coeffs$estimate))*3, 
+             col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.4), adjustcolor(col.neg,alpha.f = 0.4)))
     
   }else{
     arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(crop_diver[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
-           lwd=2,
-           col=ifelse(coeffs$estimate>0, col.pos, col.neg))
+           lwd= (abs(coeffs$estimate))*3,
+           col=ifelse(coeffs$estimate>0, col.pos, col.neg) )
     segments(x0=mean(crop_diver[2,1]), x1=mean(Pres[1:2,1])+6, y0=mean(crop_diver[3:2,2]), y1= mean(crop_diver[3:2,2]),
-             lwd=2,
-             col=ifelse(coeffs$estimate>0, col.pos, col.neg))
+             lwd= (abs(coeffs$estimate))*3,
+             col=ifelse(coeffs$estimate>0, col.pos, col.neg) )
     text(mean(c(mean(crop_diver[2,1]),mean(Pres[1:2,1])+6))  , mean(crop_diver[3:2,2])+1.2, round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate)
     
   }
@@ -298,16 +300,18 @@ PlotPath <- function(e.coefs
   coeffs <- e.coefs[e.coefs$predictor== "Fallow" & e.coefs$response=="Pres"  ,]
   if(coeffs$p.value>significant){
     arrows(x0=mean(Pres[1:2,1])+4, x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
-           lwd=1, col=col.non.signifi)
+           lwd= (abs(coeffs$estimate))*3, 
+           col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.4), adjustcolor(col.neg,alpha.f = 0.4)))
     segments(x0=mean(Fallow[2,1]), x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Fallow[3:2,2]),
-             lwd=1, col=col.non.signifi)
+             lwd= (abs(coeffs$estimate))*3, 
+             col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.4), adjustcolor(col.neg,alpha.f = 0.4)))
     
   }else{
     arrows(x0=mean(Pres[1:2,1])+4, x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
-           lwd=2,
+           lwd= (abs(coeffs$estimate))*3,
            col=ifelse(coeffs$estimate>0, col.pos, col.neg))
     segments(x0=mean(Fallow[2,1]), x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Fallow[3:2,2]),
-             lwd=2,
+             lwd= (abs(coeffs$estimate))*3,
              col=ifelse(coeffs$estimate>0, col.pos, col.neg))
     text(mean(c(mean(Fallow[2,1]),mean(Pres[1:2,1])+4))  , mean(Fallow[3:2,2])+1.2, round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate)
     
@@ -317,16 +321,18 @@ PlotPath <- function(e.coefs
   coeffs <- e.coefs[e.coefs$predictor== "par" & e.coefs$response=="Pres"  ,]
   if(coeffs$p.value>significant){
     arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
-           lwd=1, col=col.non.signifi)
+           lwd= (abs(coeffs$estimate))*3, 
+           col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.4), adjustcolor(col.neg,alpha.f = 0.4)))
     segments(x0=mean(par[2,1]), x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(par[3:2,2]),
-             lwd=1, col=col.non.signifi)
+             lwd= (abs(coeffs$estimate))*3, 
+             col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.4), adjustcolor(col.neg,alpha.f = 0.4)))
     
   }else{
     arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
-           lwd=2,
+           lwd= (abs(coeffs$estimate))*3,
            col=ifelse(coeffs$estimate>0, col.pos, col.neg))
     segments(x0=mean(par[2,1]), x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(par[3:2,2]),
-             lwd=2,
+             lwd= (abs(coeffs$estimate))*3,
              col=ifelse(coeffs$estimate>0, col.pos, col.neg))
     text(mean(c(mean(par[2,1]),mean(Pres[1:2,1])+1))  , mean(par[3:2,2])+1.2, round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate)
     
@@ -336,23 +342,89 @@ PlotPath <- function(e.coefs
   coeffs <- e.coefs[e.coefs$predictor== "tbl" & e.coefs$response=="Pres"  ,]
   if(coeffs$p.value>significant){
     arrows(x0=mean(Pres[1:2,1])-1, x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
-           lwd=1, col=col.non.signifi)
+           lwd= (abs(coeffs$estimate))*3, 
+           col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.4), adjustcolor(col.neg,alpha.f = 0.4)))
     segments(x0=mean(tbl[2,1]), x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(tbl[3:2,2]),
-             lwd=1, col=col.non.signifi)
+             lwd= (abs(coeffs$estimate))*3, col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.4), adjustcolor(col.neg,alpha.f = 0.4)))
     
   }else{
     arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
-           lwd=2,
+           lwd= (abs(coeffs$estimate))*3,
            col=ifelse(coeffs$estimate>0, col.pos, col.neg))
     segments(x0=mean(tbl[2,1]), x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(tbl[3:2,2]),
-             lwd=2,
+             lwd= (abs(coeffs$estimate))*3,
              col=ifelse(coeffs$estimate>0, col.pos, col.neg))
     text(mean(c(mean(tbl[2,1]),mean(Pres[1:2,1])-1))  , mean(tbl[3:2,2])+1.2, round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate)
     
-  }  
+  }
+  
+  #REPEAT POLYGONS TO FIX OVERLAP WITH LINES
+  
+    polygon(Treatment[,1], Treatment[,2], col =  adjustcolor("orange",alpha.f = 0.5), border = "white")
+    text(mean(Treatment[,1]),mean(Treatment[,2]), Treatment.name, cex = cex.text1)
+    
+    polygon(Pres[,1], Pres[,2], col =  adjustcolor("lightblue",alpha.f = 1), border = "white")
+    text(mean(Pres[,1]),mean(Pres[,2]), Species.name, cex = cex.text1) 
+    
+    
+    
+    polygon(SAI_sd[,1], SAI_sd[,2], col =  adjustcolor("mediumpurple1",alpha.f = 0.5), border = "white")
+    text(mean(SAI_sd[,1]),mean(SAI_sd[,2]), "SAI", cex = cex.text)
+    
+    polygon(biom[,1], biom[,2], col =  adjustcolor("mediumpurple1",alpha.f = 0.5), border = "white")
+    text(mean(biom[,1]),mean(biom[,2]), "ORTHOPTERA", cex = cex.text)
+    
+    
+    
+  polygon(Diver[,1], Diver[,2], col =  adjustcolor("olivedrab3",alpha.f = 1), border = "white")
+  text(mean(Diver[,1]),mean(Diver[,2]), "DIVERSITY", cex = cex.text)
+  
+  polygon(Heter[,1], Heter[,2], col =  adjustcolor("olivedrab3",alpha.f = 1), border = "white")
+  text(mean(Heter[,1]),mean(Heter[,2]), "HETEROGENEITY", cex = cex.text)
+  
+  polygon(Height[,1], Height[,2], col =  adjustcolor("olivedrab3",alpha.f = 1), border = "white")
+  text(mean(Height[,1]),mean(Height[,2]), "HEIGHT", cex = cex.text)
+  
+  polygon(Cover[,1], Cover[,2], col =  adjustcolor("olivedrab3",alpha.f = 1), border = "white")
+  text(mean(Cover[,1]),mean(Cover[,2]), "COVER", cex = cex.text)
+  
+  polygon(Cover_dead[,1], Cover_dead[,2], col =  adjustcolor("olivedrab3",alpha.f = 1), border = "white")
+  text(mean(Cover_dead[,1]),mean(Cover_dead[,2]), "COVER_DEAD", cex = cex.text)
   
   
   
+  polygon(Diver1[,1], Diver1[,2], col =  adjustcolor("olivedrab3",alpha.f = 0.5), border = "white")
+  text(mean(Diver1[,1]),mean(Diver1[,2]), "DIVERSITY", cex = cex.text)
+  
+  polygon(Heter1[,1], Heter1[,2], col =  adjustcolor("olivedrab3",alpha.f = 0.5), border = "white")
+  text(mean(Heter1[,1]),mean(Heter1[,2]), "HETEROGENEITY", cex = cex.text)
+  
+  polygon(Height1[,1], Height1[,2], col =  adjustcolor("olivedrab3",alpha.f = 0.5), border = "white")
+  text(mean(Height1[,1]),mean(Height1[,2]), "HEIGHT", cex = cex.text)
+  
+  polygon(Cover1[,1], Cover1[,2], col =  adjustcolor("olivedrab3",alpha.f = 0.5), border = "white")
+  text(mean(Cover1[,1]),mean(Cover1[,2]), "COVER", cex = cex.text)
+  
+  polygon(Cover_dead1[,1], Cover_dead1[,2], col =  adjustcolor("olivedrab3",alpha.f = 0.5), border = "white")
+  text(mean(Cover_dead1[,1]),mean(Cover_dead1[,2]), "COVER_DEAD", cex = cex.text)
+  
+  
+
+  
+  polygon(tbl[,1], tbl[,2], col =  adjustcolor("navajowhite4",alpha.f = 0.5), border = "white")
+  text(mean(tbl[,1]),mean(tbl[,2]), "TBL", cex = cex.text)
+  
+  polygon(par[,1], par[,2], col =  adjustcolor("navajowhite4",alpha.f = 0.5), border = "white")
+  text(mean(par[,1]),mean(par[,2]), "PAR", cex = cex.text)
+  
+  polygon(Fallow[,1], Fallow[,2], col =  adjustcolor("navajowhite4",alpha.f = 0.5), border = "white")
+  text(mean(Fallow[,1]),mean(Fallow[,2]), "FALLOW", cex = cex.text)
+  
+  polygon(crop_diver[,1], crop_diver[,2], col =  adjustcolor("navajowhite4",alpha.f = 0.5), border = "white")
+  text(mean(crop_diver[,1]),mean(crop_diver[,2]), "CROP DIVERSITY", cex = cex.text)
+  
+  polygon(area[,1], area[,2], col =  adjustcolor("yellow",alpha.f = 1), border = "white")
+  text(mean(area[,1]),mean(area[,2]), "FIELD AREA", cex = cex.text)
   
   
   
