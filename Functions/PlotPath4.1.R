@@ -29,14 +29,14 @@ PlotPath <- function(e.coefs
                      , 
                      plot.axis=FALSE             # if axis should be plotted (for developping)
                      ,
-                     estimate.box.width=c(3,3)   # width of the white box behind estimates values : first element :x axis and second : on the y axis 
+                     estimate.box.width=c(3,1)   # width of the white box behind estimates values : first element :x axis and second : on the y axis 
                      ,
                      cex.estimate = 0.7
                      ,
-                     digits.estimate = 1
+                     digits.estimate = 2
 )
 
-  
+
 {  
   require(sp)  
   
@@ -66,20 +66,20 @@ PlotPath <- function(e.coefs
   # ==== I. DEFINE THE BASIC PATH STRUCTURE ==== # Define position of boxes
   # ---- 1. Treatment/ PRESENCE ---- 
   Treatment=cbind(c(-20,-6,-6,-20), c(16,16,23,23)) # 1st column X : bottomleft, bottom right, topright, topleft.# 2nd column Y
-  polygon(Treatment[,1], Treatment[,2], col =  adjustcolor("orange",alpha.f = 0.2), border = "white")
+  polygon(Treatment[,1], Treatment[,2], col =  adjustcolor("orange",alpha.f = 0.5), border = "white")
   text(mean(Treatment[,1]),mean(Treatment[,2]), Treatment.name, cex = cex.text1)
   
   Pres=cbind(c(51,69,69,51), c(16,16,23,23))
-  polygon(Pres[,1], Pres[,2], col =  adjustcolor("lightblue",alpha.f = 1), border = "white")
+  polygon(Pres[,1], Pres[,2], col =  adjustcolor("lightblue",alpha.f = 0.5), border = "white")
   text(mean(Pres[,1]),mean(Pres[,2]), Species.name, cex = cex.text1) 
   
   
   # ---- 2. FOOD ---- 
-  SAI_sd=cbind(c(15,29,29,15), c(10,10,14,14))
-  biom=cbind(c(15,29,29,15), c(4,4,8,8))
   
+  LAI_sd=cbind(c(15,29,29,15), c(4,4,8,8))
+  biom=cbind(c(15,29,29,15), c(-4,-4,0,0))
   
-  food= rbind(SAI_sd,biom)
+  food= rbind(LAI_sd,biom)
   min1 <- min(food[,1])-offset.poly
   min2 <- min(food[,2])-offset.poly
   max1 <- max(food[,1])+offset.poly
@@ -88,13 +88,12 @@ PlotPath <- function(e.coefs
   
   polygon(c(min1,max1,max1,min1) ,
           c(min2,min2,max2,max2)  ,
-          col =  adjustcolor("mediumpurple1",alpha.f = 0.3), border = "white")
+          col =  adjustcolor("mediumpurple1",alpha.f = 0.1), border = "white")
   text(mean(food[,1]),max(food[,2])+2 , "FOOD", col=grey(0.3), cex=cex.category)
   
   
-  polygon(SAI_sd[,1], SAI_sd[,2], col =  adjustcolor("mediumpurple1",alpha.f = 0.5), border = "white")
-  text(mean(SAI_sd[,1]),mean(SAI_sd[,2]), "SAI", cex = cex.text)
-  
+  polygon(LAI_sd[,1], LAI_sd[,2], col =  adjustcolor("mediumpurple1",alpha.f = 0.5), border = "white")
+  text(mean(LAI_sd[,1]),mean(LAI_sd[,2]), "LAI", cex = cex.text)
   
   polygon(biom[,1], biom[,2], col =  adjustcolor("mediumpurple1",alpha.f = 0.5), border = "white")
   text(mean(biom[,1]),mean(biom[,2]), "ORTHOPTERA", cex = cex.text)
@@ -114,7 +113,7 @@ PlotPath <- function(e.coefs
   
   polygon(c(min1,max1,max1,min1) ,
           c(min2,min2,max2,max2)  ,
-          col =  adjustcolor("olivedrab3",alpha.f = 0.3), border = "white")
+          col =  adjustcolor("olivedrab3",alpha.f = 0.1), border = "white")
   text(mean(veg[,1]),max(veg[,2])+2 , "VEGETATION", col=grey(0.3), cex=cex.category)
   
   
@@ -130,7 +129,7 @@ PlotPath <- function(e.coefs
   polygon(Cover[,1], Cover[,2], col =  adjustcolor("olivedrab3",alpha.f = 0.5), border = "white")
   text(mean(Cover[,1]),mean(Cover[,2]), "COVER", cex = cex.text)
   
-  polygon(Cover_dead[,1], Cover_dead[,2], col =  adjustcolor("olivedrab3",alpha.f = 1), border = "white")
+  polygon(Cover_dead[,1], Cover_dead[,2], col =  adjustcolor("olivedrab3",alpha.f = 0.5), border = "white")
   text(mean(Cover_dead[,1]),mean(Cover_dead[,2]), "COVER_DEAD", cex = cex.text)
   
   # ---- 4. VEGETATION  2 ---- 
@@ -149,7 +148,7 @@ PlotPath <- function(e.coefs
   
   polygon(c(min1,max1,max1,min1) ,
           c(min2,min2,max2,max2)  ,
-          col =  adjustcolor("olivedrab3",alpha.f = 0.3), border = "white")
+          col =  adjustcolor("olivedrab3",alpha.f = 0.1), border = "white")
   text(mean(veg1[,1]),max(veg1[,2])+2 , "VEGETATION", col=grey(0.3), cex=cex.category)
   
   
@@ -186,7 +185,7 @@ PlotPath <- function(e.coefs
   
   polygon(c(min1,max1,max1,min1) ,
           c(min2,min2,max2,max2)  ,
-          col =  adjustcolor("navajowhite4",alpha.f = 0.3), border = "white")
+          col =  adjustcolor("navajowhite4",alpha.f = 0.1), border = "white")
   
   text(mean(landscape[,1]),max(landscape[,2])+2 , "LANDSCAPE", col=grey(0.3), cex=cex.category)
   
@@ -214,28 +213,32 @@ PlotPath <- function(e.coefs
                    "Diver", "Heter", "Height", "Cover", "Cover_dead",
                    "Diver", "Heter", "Height", "Cover", "Cover_dead",
                    "tbl","par","Fallow","crop_diver",
-                   "SAI_sd", "biom", 
+                   "LAI_sd", "biom",
+                   "LAI_sd", 
                    "area")
   
-  response <- c("SAI_sd","biom","Diver","Heter","Height","Cover","Cover_dead",
+  response <- c("LAI_sd","biom","Diver","Heter","Height","Cover","Cover_dead",
                 rep("Pres",5),
                 rep("biom", 5),
                 rep("biom", 4),
-                rep("Pres",3),
+                rep("Pres",2),
+                "biom",
                 "Pres")
   
   x0= c(rep(mean(Treatment[c(1:2),1]),7),
         mean(Diver[c(2),1]), mean(Heter[c(2),1]), mean(Height[c(2),1]), mean(Cover[c(2),1]), mean(Cover_dead[c(2),1]),
         mean(Diver1[c(2),1]), mean(Heter1[c(2),1]), mean(Height1[c(2),1]), mean(Cover1[c(2),1]), mean(Cover_dead1[c(2),1]),
         mean(tbl[c(1),1]), mean(par[c(1),1]), mean(Fallow[c(1),1]), mean(crop_diver[c(1),1]),
-        SAI_sd[3,1], biom[3,1],
+        LAI_sd[3,1], biom[3,1],
+        mean(LAI_sd[1:2,1]),
         mean(area[1:2,1]))
   
-  x1= c(SAI_sd[1,1], biom[1,1], Diver[1,1], Heter[1,1], Height[1,1], Cover[1,1], Cover_dead[1,1],
+  x1= c(LAI_sd[1,1], biom[1,1], Diver[1,1], Heter[1,1], Height[1,1], Cover[1,1], Cover_dead[1,1],
         rep(mean(Pres[1:2,1]), 5),
         rep(mean(biom[1,1]), 5),
         rep(mean(biom[2,1]), 4),
         rep(Pres[1,1],2),
+        mean(biom[1:2,1]),
         mean(area[1:2,1]) )
   
   y0= c(mean(Treatment[1,2]),mean(Treatment[1,2]),
@@ -243,17 +246,20 @@ PlotPath <- function(e.coefs
         mean(Diver[3:2,2]), mean(Heter[3:2,2]), mean(Height[3:2,2]), mean(Cover[3:2,2]), mean(Cover_dead[3:2,2]),
         mean(Diver1[3:2,2]), mean(Heter1[3:2,2]), mean(Height1[3:2,2]), mean(Cover1[3:2,2]), mean(Cover_dead1[3:2,2]),
         mean(tbl[3:2,2]), mean(par[3:2,2]), mean(Fallow[3:2,2]), mean(crop_diver[3:2,2]),
-        mean(SAI_sd[3,2]), biom[3,2],
+        LAI_sd[3,2], biom[3,2],
+        LAI_sd[2,2],
         mean(area[2,2]) )
   
   
-  y1= c(mean(SAI_sd[c(1,4),2]) ,mean(biom[c(1,4),2]) ,mean(Diver[c(1,4),2]),
+  y1= c(mean(LAI_sd[c(1,4),2]) ,mean(biom[c(1,4),2]) ,mean(Diver[c(1,4),2]),
         mean(Heter[c(1,4),2]), mean(Height[c(1,4),2]), mean(Cover[c(1,4),2]), mean(Cover_dead[c(1,4),2]),
         rep(mean(Pres[c(4),2]), 5),
         rep(mean(biom[c(1:4),2]), 5),
         rep(mean(biom[c(2:3),2]), 4),
         rep(Pres[1,2],2),
+        biom[3,2],
         mean(Pres[3,2]) )
+  
   
   #for example p>0.10 = very transparent (alpha.f = 0.25)
   #for example 0.05<p>0.10= a bit less transparent (alpha.f = 0.5) + *
@@ -294,7 +300,7 @@ PlotPath <- function(e.coefs
   
   #NOW, ADD LANDSCAPE ARROWS
   coeffs <- e.coefs[e.coefs$predictor== "crop_diver" & e.coefs$response=="Pres"  ,]
- 
+  
   if((coeffs$p.value > 0.10)){
     arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(crop_diver[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
            lwd= (abs(coeffs$estimate))*3, 
@@ -302,7 +308,7 @@ PlotPath <- function(e.coefs
     segments(x0=mean(crop_diver[2,1]), x1=mean(Pres[1:2,1])+6, y0=mean(crop_diver[3:2,2]), y1= mean(crop_diver[3:2,2]),
              lwd= (abs(coeffs$estimate))*3, 
              col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.25), adjustcolor(col.neg,alpha.f = 0.25))) }
- 
+  
   if((0.05 < coeffs$p.value) & (coeffs$p.value < 0.10)){
     arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(crop_diver[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
            lwd= (abs(coeffs$estimate))*3, 
@@ -311,16 +317,16 @@ PlotPath <- function(e.coefs
              lwd= (abs(coeffs$estimate))*3, 
              col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.5), adjustcolor(col.neg,alpha.f = 0.5)))
     text(mean(c(mean(crop_diver[2,1]),mean(Pres[1:2,1])+6))  , mean(crop_diver[3:2,2])+1.2, round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate) }
-    
+  
   if((0.01 < coeffs$p.value) & (coeffs$p.value < 0.05)){
-      arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(crop_diver[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+    arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(crop_diver[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+           lwd= (abs(coeffs$estimate))*3, 
+           col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.75), adjustcolor(col.neg,alpha.f = 0.75)))
+    segments(x0=mean(crop_diver[2,1]), x1=mean(Pres[1:2,1])+6, y0=mean(crop_diver[3:2,2]), y1= mean(crop_diver[3:2,2]),
              lwd= (abs(coeffs$estimate))*3, 
              col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.75), adjustcolor(col.neg,alpha.f = 0.75)))
-      segments(x0=mean(crop_diver[2,1]), x1=mean(Pres[1:2,1])+6, y0=mean(crop_diver[3:2,2]), y1= mean(crop_diver[3:2,2]),
-               lwd= (abs(coeffs$estimate))*3, 
-               col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.75), adjustcolor(col.neg,alpha.f = 0.75)))
-      text(mean(c(mean(crop_diver[2,1]),mean(Pres[1:2,1])+6))  , mean(crop_diver[3:2,2])+1.2, labels = paste(round(coeffs$estimate, digits = digits.estimate), "*"), cex=cex.estimate) }
-      
+    text(mean(c(mean(crop_diver[2,1]),mean(Pres[1:2,1])+6))  , mean(crop_diver[3:2,2])+1.2, labels = paste(round(coeffs$estimate, digits = digits.estimate), "*"), cex=cex.estimate) }
+  
   if(coeffs$p.value < 0.01){
     arrows(x0=mean(Pres[1:2,1])+6, x1=mean(Pres[1:2,1])+6, y0=mean(crop_diver[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
            lwd= (abs(coeffs$estimate))*3, 
@@ -342,7 +348,7 @@ PlotPath <- function(e.coefs
              lwd= (abs(coeffs$estimate))*3, 
              col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.25), adjustcolor(col.neg,alpha.f = 0.25))) }
   
-   if ((0.05 < coeffs$p.value) & (coeffs$p.value < 0.10)){
+  if ((0.05 < coeffs$p.value) & (coeffs$p.value < 0.10)){
     arrows(x0=mean(Pres[1:2,1])+4, x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
            lwd= (abs(coeffs$estimate))*3, 
            col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.5), adjustcolor(col.neg,alpha.f = 0.5)))
@@ -350,38 +356,38 @@ PlotPath <- function(e.coefs
              lwd= (abs(coeffs$estimate))*3, 
              col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.5), adjustcolor(col.neg,alpha.f = 0.5)))
     text(mean(c(mean(Fallow[2,1]),mean(Pres[1:2,1])+4))  , mean(Fallow[3:2,2])+1.2, round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate) }
-    
-    if ((0.01 < coeffs$p.value) & (coeffs$p.value < 0.05)){
+  
+  if ((0.01 < coeffs$p.value) & (coeffs$p.value < 0.05)){
     arrows(x0=mean(Pres[1:2,1])+4, x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+           lwd= (abs(coeffs$estimate))*3, 
+           col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.75), adjustcolor(col.neg,alpha.f = 0.75)))
+    segments(x0=mean(Fallow[2,1]), x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Fallow[3:2,2]),
              lwd= (abs(coeffs$estimate))*3, 
              col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.75), adjustcolor(col.neg,alpha.f = 0.75)))
-    segments(x0=mean(Fallow[2,1]), x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Fallow[3:2,2]),
-               lwd= (abs(coeffs$estimate))*3, 
-               col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.75), adjustcolor(col.neg,alpha.f = 0.75)))
     text(mean(c(mean(Fallow[2,1]),mean(Pres[1:2,1])+4))  , mean(Fallow[3:2,2])+1.2, labels = paste(round(coeffs$estimate, digits = digits.estimate), "*"), cex=cex.estimate) }
-    
-    if (coeffs$p.value < 0.01){
+  
+  if (coeffs$p.value < 0.01){
     arrows(x0=mean(Pres[1:2,1])+4, x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+           lwd= (abs(coeffs$estimate))*3, 
+           col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 1), adjustcolor(col.neg,alpha.f = 1)))
+    segments(x0=mean(Fallow[2,1]), x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Fallow[3:2,2]),
              lwd= (abs(coeffs$estimate))*3, 
              col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 1), adjustcolor(col.neg,alpha.f = 1)))
-    segments(x0=mean(Fallow[2,1]), x1=mean(Pres[1:2,1])+4, y0=mean(Fallow[3:2,2]), y1= mean(Fallow[3:2,2]),
-               lwd= (abs(coeffs$estimate))*3, 
-               col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 1), adjustcolor(col.neg,alpha.f = 1)))
     text(mean(c(mean(Fallow[2,1]),mean(Pres[1:2,1])+4))  , mean(Fallow[3:2,2])+1.2, labels = paste(round(coeffs$estimate, digits = digits.estimate), "**"), cex=cex.estimate) }
-      
+  
   
   
   coeffs <- e.coefs[e.coefs$predictor== "par" & e.coefs$response=="Pres"  ,]
- 
-   if(coeffs$p.value > 0.10){
+  
+  if(coeffs$p.value > 0.10){
     arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
            lwd= (abs(coeffs$estimate))*3, 
            col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.25), adjustcolor(col.neg,alpha.f = 0.25)))
     segments(x0=mean(par[2,1]), x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(par[3:2,2]),
              lwd= (abs(coeffs$estimate))*3, 
              col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.25), adjustcolor(col.neg,alpha.f = 0.25))) }
-    
-    if ((0.05 < coeffs$p.value) & (coeffs$p.value < 0.10)){
+  
+  if ((0.05 < coeffs$p.value) & (coeffs$p.value < 0.10)){
     arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
            lwd= (abs(coeffs$estimate))*3,
            col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.5), adjustcolor(col.neg,alpha.f = 0.5)))
@@ -389,25 +395,25 @@ PlotPath <- function(e.coefs
              lwd= (abs(coeffs$estimate))*3,
              col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.5), adjustcolor(col.neg,alpha.f = 0.5)))
     text(mean(c(mean(par[2,1]),mean(Pres[1:2,1])+1))  , mean(par[3:2,2])+1.2, round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate)}
-    
-    if ((0.01 < coeffs$p.value) & (coeffs$p.value < 0.05)){
+  
+  if ((0.01 < coeffs$p.value) & (coeffs$p.value < 0.05)){
     arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
-             lwd= (abs(coeffs$estimate))*3,
+           lwd= (abs(coeffs$estimate))*3,
            col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.75), adjustcolor(col.neg,alpha.f = 0.75)))
     segments(x0=mean(par[2,1]), x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(par[3:2,2]),
-               lwd= (abs(coeffs$estimate))*3,
+             lwd= (abs(coeffs$estimate))*3,
              col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.75), adjustcolor(col.neg,alpha.f = 0.75)))
     text(mean(c(mean(par[2,1]),mean(Pres[1:2,1])+4))  , mean(par[3:2,2])+1.2, labels = paste(round(coeffs$estimate, digits = digits.estimate), "*"), cex=cex.estimate) }
-    
-    if (coeffs$p.value < 0.01){
-      arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+  
+  if (coeffs$p.value < 0.01){
+    arrows(x0=mean(Pres[1:2,1])+1, x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+           lwd= (abs(coeffs$estimate))*3,
+           col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 1), adjustcolor(col.neg,alpha.f = 1)))
+    segments(x0=mean(par[2,1]), x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(par[3:2,2]),
              lwd= (abs(coeffs$estimate))*3,
              col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 1), adjustcolor(col.neg,alpha.f = 1)))
-      segments(x0=mean(par[2,1]), x1=mean(Pres[1:2,1])+1, y0=mean(par[3:2,2]), y1= mean(par[3:2,2]),
-               lwd= (abs(coeffs$estimate))*3,
-               col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 1), adjustcolor(col.neg,alpha.f = 1)))
-      text(mean(c(mean(par[2,1]),mean(Pres[1:2,1])+4))  , mean(par[3:2,2])+1.2, labels = paste(round(coeffs$estimate, digits = digits.estimate), "**"), cex=cex.estimate) }
-    
+    text(mean(c(mean(par[2,1]),mean(Pres[1:2,1])+4))  , mean(par[3:2,2])+1.2, labels = paste(round(coeffs$estimate, digits = digits.estimate), "**"), cex=cex.estimate) }
+  
   
   coeffs <- e.coefs[e.coefs$predictor== "tbl" & e.coefs$response=="Pres"  ,]
   
@@ -418,7 +424,7 @@ PlotPath <- function(e.coefs
     segments(x0=mean(tbl[2,1]), x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(tbl[3:2,2]),
              lwd= (abs(coeffs$estimate))*3, 
              col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.25), adjustcolor(col.neg,alpha.f = 0.25)))}
-    
+  
   if ((0.05 < coeffs$p.value) & (coeffs$p.value < 0.10)){
     arrows(x0=mean(Pres[1:2,1])-1, x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
            lwd= (abs(coeffs$estimate))*3,
@@ -427,25 +433,25 @@ PlotPath <- function(e.coefs
              lwd= (abs(coeffs$estimate))*3,
              col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.5), adjustcolor(col.neg,alpha.f = 0.5)))
     text(mean(c(mean(tbl[2,1]),mean(Pres[1:2,1])-1))  , mean(tbl[3:2,2])+1.2, round(coeffs$estimate, digits = digits.estimate), cex=cex.estimate)}
-    
+  
   if ((0.01 < coeffs$p.value) & (coeffs$p.value < 0.05)){
-      arrows(x0=mean(Pres[1:2,1])-1, x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+    arrows(x0=mean(Pres[1:2,1])-1, x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+           lwd= (abs(coeffs$estimate))*3,
+           col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.75), adjustcolor(col.neg,alpha.f = 0.75)))
+    segments(x0=mean(tbl[2,1]), x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(tbl[3:2,2]),
              lwd= (abs(coeffs$estimate))*3,
              col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.75), adjustcolor(col.neg,alpha.f = 0.75)))
-      segments(x0=mean(tbl[2,1]), x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(tbl[3:2,2]),
-               lwd= (abs(coeffs$estimate))*3,
-               col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 0.75), adjustcolor(col.neg,alpha.f = 0.75)))
-      text(mean(c(mean(tbl[2,1]),mean(Pres[1:2,1])-1))  , mean(tbl[3:2,2])+1.2, labels = paste(round(coeffs$estimate, digits = digits.estimate), "*"), cex=cex.estimate)}
-    
-    if (coeffs$p.value < 0.01){
-      arrows(x0=mean(Pres[1:2,1])-1, x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+    text(mean(c(mean(tbl[2,1]),mean(Pres[1:2,1])-1))  , mean(tbl[3:2,2])+1.2, labels = paste(round(coeffs$estimate, digits = digits.estimate), "*"), cex=cex.estimate)}
+  
+  if (coeffs$p.value < 0.01){
+    arrows(x0=mean(Pres[1:2,1])-1, x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(Pres[c(2),2]), length = 0.1, 
+           lwd= (abs(coeffs$estimate))*3,
+           col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 1), adjustcolor(col.neg,alpha.f = 1)))
+    segments(x0=mean(tbl[2,1]), x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(tbl[3:2,2]),
              lwd= (abs(coeffs$estimate))*3,
              col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 1), adjustcolor(col.neg,alpha.f = 1)))
-      segments(x0=mean(tbl[2,1]), x1=mean(Pres[1:2,1])-1, y0=mean(tbl[3:2,2]), y1= mean(tbl[3:2,2]),
-               lwd= (abs(coeffs$estimate))*3,
-               col=ifelse(coeffs$estimate>0, adjustcolor(col.pos,alpha.f = 1), adjustcolor(col.neg,alpha.f = 1)))
-      text(mean(c(mean(tbl[2,1]),mean(Pres[1:2,1])-1))  , mean(tbl[3:2,2])+1.2, labels = paste(round(coeffs$estimate, digits = digits.estimate), "**"), cex=cex.estimate)}
-    
+    text(mean(c(mean(tbl[2,1]),mean(Pres[1:2,1])-1))  , mean(tbl[3:2,2])+1.2, labels = paste(round(coeffs$estimate, digits = digits.estimate), "**"), cex=cex.estimate)}
+  
   
   #REPEAT POLYGONS TO FIX OVERLAP WITH LINES
   
@@ -457,8 +463,8 @@ PlotPath <- function(e.coefs
   
   
   
-  polygon(SAI_sd[,1], SAI_sd[,2], col =  adjustcolor("mediumpurple1",alpha.f = 0.5), border = "white")
-  text(mean(SAI_sd[,1]),mean(SAI_sd[,2]), "SAI", cex = cex.text)
+  polygon(LAI_sd[,1], LAI_sd[,2], col =  adjustcolor("mediumpurple1",alpha.f = 0.5), border = "white")
+  text(mean(LAI_sd[,1]),mean(LAI_sd[,2]), "LAI", cex = cex.text)
   
   polygon(biom[,1], biom[,2], col =  adjustcolor("mediumpurple1",alpha.f = 0.5), border = "white")
   text(mean(biom[,1]),mean(biom[,2]), "ORTHOPTERA", cex = cex.text)
@@ -557,7 +563,7 @@ PlotPath <- function(e.coefs
   # arrows(x0=mean(Fallow[c(1),1]), x1=mean(biom[2,1]), y0=mean(Fallow[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
   # arrows(x0=mean(crop_diver[c(1),1]), x1=mean(biom[2,1]), y0=mean(crop_diver[3:2,2]), y1= mean(biom[c(2:3),2]),length = 0.1)
   
-   }
-  
+}
+
 
 

@@ -193,7 +193,7 @@ PlotPath <- function(e.coefs
   
   
   polygon(par[,1], par[,2], col =  adjustcolor("brown",alpha.f = 0.5), border = "white")
-  text(mean(par[,1]),mean(par[,2]), "PAR", cex = cex.text)
+  text(mean(par[,1]),mean(par[,2]), "MPAR", cex = cex.text)
   
   polygon(Fallow[,1], Fallow[,2], col =  adjustcolor("brown",alpha.f = 0.5), border = "white")
   text(mean(Fallow[,1]),mean(Fallow[,2]), "FALLOW", cex = cex.text)
