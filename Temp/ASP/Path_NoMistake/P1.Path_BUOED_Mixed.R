@@ -1,7 +1,7 @@
 
 rm(list=ls())
 
-# PATH ANALYSIS BUOED. 
+# PATH ANALYSIS BUOED: CHECK IF ITs WRONG REMOVING THE MISTAKE WITH S, S+H and T (its good)
   # - Plot with PlotPath3.1 (-LAI)
 
 library(dplyr)
@@ -10,23 +10,10 @@ library(piecewiseSEM)
 library(nlme)
 library(lme4)
 
-setwd("~/Datos/Datos barbechos arrendados/Variables")
-#setwd("~/PhD/Datos/Datos barbechos arrendados/Variables")
+setwd("C:/Users/ana.sanz/Documents/First chapter/Datos/Datos barbechos arrendados/Variables")
 
-f <- read.csv("Variables.csv", sep = ",", header=TRUE, fill = TRUE)
-colnames(f)[6] <- "EspecieObj"
+f <- read.csv("Data_path_manuscript2.csv", sep = ",", header=TRUE, fill = TRUE)
 f <- f[which(f$EspecieObj == "BUOED"), ]
-
-
-f[f == 99.00] <- NA
-f <- f[-which(duplicated(f[ , 2:15])), ]
-f <- f[which(complete.cases(f$Contatge)), ]
-length(which(f$Contatge > 0)) 
-
-f_or <- f[ which(f$Zone == "ORIENTAL"), ] # 89 fields with presence 
-length(which(f_or$Contatge > 0))
-f_oc <- f[ which(f$Zone == "OCCIDENTAL"), ] # 87 fields with presence
-length(which(f_oc$Contatge > 0)) 
 
 
 ################################### PICAR Y HERBICIDAR #################################################################### 
@@ -36,7 +23,9 @@ e <- f[ , which(colnames(f) %in% c("CF_A", "Contatge", "Recob_plotViu", "Recob_p
                                    "Irri_500", "Tree_500", "shan_500", "Zone", "Tractament", "Any", "Codi_Finca", "area"))]
 
 
-e <-e[-which(duplicated(e[ , 8])), ] #Modify adding good duplicates!
+e$Tractament <- as.character(e$Tractament)
+e$Codi_Finca <- as.character(e$Codi_Finca)
+e$Any <- as.character(e$Any)
 
 e <- e[ which(e$Tractament %in% c("Control", "Picar i herbicidar")), ] #Select treatment
 
@@ -54,7 +43,7 @@ length(which(e$Zone == "ORIENTAL" & e$Control == "1"))
 e <- e[-which(e$Zone == "ORIENTAL"), ] # Delete occidental because only 0 and no use of Zone
 table(e$Any)
 
-
+colnames(e)[2] <- "Year"
 colnames(e)[3] <- "Pres"
 colnames(e)[4] <- "Cover"
 colnames(e)[5] <- "Cover_dead"
@@ -65,11 +54,8 @@ colnames(e)[10] <- "area"
 colnames(e)[11] <- "tbl"
 colnames(e)[12] <- "par"
 colnames(e)[13] <- "Fallow"
-colnames(e)[14] <- "Tree"
-colnames(e)[15] <- "Irrig"
-colnames(e)[20] <- "crop_diver"
-colnames(e)[2] <- "Year"
-colnames(e)[22] <- "Treatment"
+colnames(e)[18] <- "crop_diver"
+colnames(e)[20] <- "Treatment"
 
 e$Cover<-scale(e$Cover)
 e$Height<-scale(e$Height)
@@ -80,8 +66,6 @@ e$Diver<-scale(e$Diver)
 e$tbl<-scale(e$tbl)
 e$par<-scale(e$par)
 e$Fallow<-scale(e$Fallow)
-e$Irrig<-scale(e$Irrig)
-e$Tree<-scale(e$Tree)
 e$crop_diver<-scale(e$crop_diver)
 e$area <- scale(e$area)
 
@@ -201,8 +185,9 @@ e <- f[ , which(colnames(f) %in% c("CF_A", "Contatge", "Recob_plotViu", "Recob_p
                                    "PromigAltura1Plot", "biom", "SAI_sd","LAI_sd", "TBL_500", "PAR_500","Fallow_500", 
                                    "Irri_500", "Tree_500", "shan_500", "Zone", "Tractament", "Any", "Codi_Finca", "area"))]
 
-
-e <-e[-which(duplicated(e[ , 8])), ] #Modify adding good duplicates!
+e$Tractament <- as.character(e$Tractament)
+e$Codi_Finca <- as.character(e$Codi_Finca)
+e$Any <- as.character(e$Any)
 
 e <- e[ which(e$Tractament %in% c("Control", "Picar")), ] #Select treatment
 
@@ -224,6 +209,7 @@ e$Zone[which(e$Zone == "ORIENTAL")] <- 1
 e$Zone <- as.factor(e$Zone)
 
 
+colnames(e)[2] <- "Year"
 colnames(e)[3] <- "Pres"
 colnames(e)[4] <- "Cover"
 colnames(e)[5] <- "Cover_dead"
@@ -234,11 +220,8 @@ colnames(e)[10] <- "area"
 colnames(e)[11] <- "tbl"
 colnames(e)[12] <- "par"
 colnames(e)[13] <- "Fallow"
-colnames(e)[14] <- "Tree"
-colnames(e)[15] <- "Irrig"
-colnames(e)[20] <- "crop_diver"
-colnames(e)[2] <- "Year"
-colnames(e)[22] <- "Treatment"
+colnames(e)[18] <- "crop_diver"
+colnames(e)[20] <- "Treatment"
 
 e$Cover<-scale(e$Cover)
 e$Height<-scale(e$Height)
@@ -249,8 +232,6 @@ e$Diver<-scale(e$Diver)
 e$tbl<-scale(e$tbl)
 e$par<-scale(e$par)
 e$Fallow<-scale(e$Fallow)
-e$Irrig<-scale(e$Irrig)
-e$Tree<-scale(e$Tree)
 e$crop_diver<-scale(e$crop_diver)
 e$area <- scale(e$area)
 
@@ -452,15 +433,16 @@ e <- f[ , which(colnames(f) %in% c("CF_A", "Contatge", "Recob_plotViu", "Recob_p
                                    "Irri_500", "Tree_500", "shan_500", "Zone", "Tractament", "Any", "Codi_Finca", "area"))]
 
 
-e <-e[-which(duplicated(e[ , 8])), ] #Modify adding good duplicates!
-
-e$Tractament[which(e$Tractament == "Curronar")] <- "Llaurar" 
-e <- e[ which(e$Tractament %in% c("Control", "Llaurar")), ] 
-
-e <- e %>% 
-  unnest(Tractament) %>% 
-  mutate(new = 1) %>% 
-  spread(Tractament, new, fill = 0) #Create dummy variable for treatment
+        e$Tractament <- as.character(e$Tractament)
+        e$Codi_Finca <- as.character(e$Codi_Finca)
+        e$Any <- as.character(e$Any)
+        
+        e <- e[ which(e$Tractament %in% c("Control", "Llaurar")), ] #Select treatment
+        
+        e <- e %>% 
+          unnest(Tractament) %>% 
+          mutate(new = 1) %>% 
+          spread(Tractament, new, fill = 0) #Create dummy variable for treatment
 
 
 length(which(e$Zone == "OCCIDENTAL" & e$Llaurar == "1")) # TREATMENT: 76 p and 124 Control en OCCIDENTAL
@@ -473,6 +455,7 @@ e$Zone[which(e$Zone == "ORIENTAL")] <- 1
 e$Zone <- as.factor(e$Zone)
 
 
+colnames(e)[2] <- "Year"
 colnames(e)[3] <- "Pres"
 colnames(e)[4] <- "Cover"
 colnames(e)[5] <- "Cover_dead"
@@ -483,11 +466,8 @@ colnames(e)[10] <- "area"
 colnames(e)[11] <- "tbl"
 colnames(e)[12] <- "par"
 colnames(e)[13] <- "Fallow"
-colnames(e)[14] <- "Tree"
-colnames(e)[15] <- "Irrig"
-colnames(e)[20] <- "crop_diver"
-colnames(e)[2] <- "Year"
-colnames(e)[22] <- "Treatment"
+colnames(e)[18] <- "crop_diver"
+colnames(e)[20] <- "Treatment"
 
 e$Cover<-scale(e$Cover)
 e$Height<-scale(e$Height)
@@ -498,8 +478,6 @@ e$Diver<-scale(e$Diver)
 e$tbl<-scale(e$tbl)
 e$par<-scale(e$par)
 e$Fallow<-scale(e$Fallow)
-e$Irrig<-scale(e$Irrig)
-e$Tree<-scale(e$Tree)
 e$crop_diver<-scale(e$crop_diver)
 e$area <- scale(e$area)
 

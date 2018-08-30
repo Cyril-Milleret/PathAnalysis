@@ -1,6 +1,6 @@
 rm(list=ls())
 
-#PATH ANALYSIS MECAL Plot with PlotPath3 (-LAI)
+#PATH ANALYSIS MECAL Plot with PlotPath3.1 (-LAI)
 
 library(dplyr)
 library(tidyr)
@@ -8,7 +8,7 @@ library(piecewiseSEM)
 library(nlme)
 library(lme4)
 
-setwd("~/Phd/Datos/Datos barbechos arrendados/Variables")
+setwd("~/Datos/Datos barbechos arrendados/Variables")
 
 f <- read.csv("Variables.csv", sep = ",", header=TRUE, fill = TRUE)
 colnames(f)[6] <- "EspecieObj"
@@ -24,6 +24,8 @@ f_or <- f[ which(f$Zone == "ORIENTAL"), ] # Occidental y oriental or only orient
 length(which(f_or$Contatge > 0))
 f_oc <- f[ which(f$Zone == "OCCIDENTAL"), ] 
 length(which(f_oc$Contatge > 0)) #INCLUDE BOTH
+
+no_na<-na.omit(f)
 
 
 ################################### PICAR Y HERBICIDAR #################################################################### 
@@ -112,7 +114,7 @@ e.list0 <- list(
        family = "binomial"(link = "logit"), data = e) )
 
 e.fit0 <- sem.fit(e.list0, e) #438.33
-x0 <- rsquared(e.list0)
+x0 <- rsquared(e.list0) #r2 = 0.48
 
 
 # Random intercept Year
@@ -132,7 +134,7 @@ e.list2 <- list(
          family = "binomial"(link = "logit"), data = e))
 
 e.fit2 <- sem.fit(e.list2, e) # AIC = 379.35
-x2 <- rsquared(e.list2)
+x2 <- rsquared(e.list2) # Conditional (=marginal) r2 = 0.47
 
 #LOWEST AIC: YEAR -> INCLUDE MISSING PATHS
 
@@ -152,10 +154,12 @@ e.list21 <- list(
          family = "binomial"(link = "logit"), data = e))
 
 e.fit21 <- sem.fit(e.list21, e) # AIC = 379.35
-x2 <- rsquared(e.list2)
+x21 <- rsquared(e.list21)
 e.coefs21 <- sem.coefs(e.list21,e) 
+e.coefs21$lowCI <- e.coefs21$estimate - 2*e.coefs21$std.error
+e.coefs21$upCI <- e.coefs21$estimate + 2*e.coefs21$std.error
 
-setwd("~/Phd/First chapter/Path analysis/Results2")
+setwd("C:/Users/ana.sanz/Documents/First chapter/Path analysis/Results2")
 pdf(file = "Mecal_SH.pdf")
 par(mar=c(1,1,1,1))
 
@@ -170,7 +174,7 @@ PlotPath(e.coefs21
          ,col.neg="red"
          ,col.non.signifi="grey"
          ,Treatment.name= "SHREDDING +\n HERBICIDE"
-         ,Species.name="PRESENCE \n MECAL"
+         ,Species.name="PRESENCE \n CL"
          ,cex.category = 0.5
          ,plot.axis=FALSE
          ,estimate.box.width=c(2, 1),
@@ -266,7 +270,7 @@ e.list0 <- list(
        family = "binomial"(link = "logit"), data = e) )
 
 e.fit0 <- sem.fit(e.list0, e) # AIC = 560.31
-x0 <- rsquared(e.list0) #r2 = 0.22
+x0 <- rsquared(e.list0) #r2 = 0.33
 
 # Random intercept zone
 e.list1 <- list( 
@@ -285,7 +289,7 @@ e.list1 <- list(
          family = "binomial"(link = "logit"), data = e))
 
 e.fit1 <- sem.fit(e.list1, e) # AIC = 572.87
-x1 <- rsquared(e.list1) #???r2 = 0.39
+x1 <- rsquared(e.list1) #Conditional r2 = 0.30
 
 # Random intercept Year
 e.list2 <- list( 
@@ -304,9 +308,9 @@ e.list2 <- list(
          family = "binomial"(link = "logit"), data = e))
 
 e.fit2 <- sem.fit(e.list2, e) # AIC = 552.06
-x2 <- rsquared(e.list2) #r2 = 0.43
+x2 <- rsquared(e.list2) # Cond r2 = 0.33
 
-#LOWEST AIC: YEAR
+#LOWEST AIC AND HIGHEST CONDITIONAL R2: YEAR
 e.list21 <- list( 
   lmer( Cover ~ Treatment + par + area + Fallow + (1|Year), data = e, REML = TRUE),
   lmer( Cover_dead ~ Treatment + Fallow + par + area + Cover + tbl + (1|Year), data = e, REML = TRUE),
@@ -324,9 +328,11 @@ e.list21 <- list(
 
 e.fit21 <- sem.fit(e.list21, e) # AIC = 211.34
 e.coefs21 <- sem.coefs(e.list21,e)
-x21 <- rsquared(e.list21) #r2 = 0.43
+x21 <- rsquared(e.list21) # Marginal R2 = 0.31
+e.coefs21$lowCI <- e.coefs21$estimate - 2*e.coefs21$std.error
+e.coefs21$upCI <- e.coefs21$estimate + 2*e.coefs21$std.error
 
-setwd("~/Phd/First chapter/Path analysis/Results2")
+setwd("~/First chapter/Path analysis/Results2")
 pdf(file = "Mecal_S.pdf")
 par(mar=c(1,1,1,1))
 
@@ -341,7 +347,7 @@ PlotPath(e.coefs21
          ,col.neg="red"
          ,col.non.signifi="grey"
          ,Treatment.name= "SHREDDING"
-         ,Species.name="PRESENCE \n MECAL"
+         ,Species.name="PRESENCE \n CL"
          ,cex.category = 0.5
          ,plot.axis=FALSE
          ,estimate.box.width=c(3, 1),
@@ -436,6 +442,8 @@ e.list0 <- list(
        family = "binomial"(link = "logit"), data = e) )
 
 e.fit0 <- sem.fit(e.list0, e) # AIC = 606.75
+x0 <- rsquared(e.list0) # R2 = 0.26
+
 
 # Random intercept zone
 
@@ -455,6 +463,8 @@ e.list1 <- list(
          family = "binomial"(link = "logit"), data = e) )
 
 e.fit1 <- sem.fit(e.list1, e) # AIC = 579.78
+x1 <- rsquared(e.list1) # Conditional R2 = 0.25
+
 
 # Random intercept Year
 e.list2 <- list( 
@@ -473,6 +483,7 @@ e.list2 <- list(
          family = "binomial"(link = "logit"), data = e))
 
 e.fit2 <- sem.fit(e.list2, e) # AIC = 588.85
+x2 <- rsquared(e.list2) # Conditional R2 = 0.25
 
 
 # Random intercept Zone + Year
@@ -492,9 +503,10 @@ e.list3 <- list(
          family = "binomial"(link = "logit"), data = e))
 
 e.fit3 <- sem.fit(e.list3, e) # AIC = 563.19
+x3 <- rsquared(e.list3) # Conditional R2 = 0.30
 
 
-# LOWEST AIC: YEAR + ZONE
+# LOWEST AIC and HIGHEST R2: YEAR + ZONE
 
 e.list31 <- list( 
   lmer( Cover ~ Treatment + par + area + (1|Year) + (1|Zone), data = e),
@@ -511,12 +523,15 @@ e.list31 <- list(
            SAI_sd + Fallow + crop_diver + par + tbl + area + (1|Year) + (1|Zone), 
          family = "binomial"(link = "logit"), data = e))
 
-e.fit31 <- sem.fit(e.list31, e) # AIC = 567
+e.fit31 <- sem.fit(e.list31, e) # AIC = 227
+x31 <- rsquared(e.list31) # Marginal R2 = 0.24
 
 e.coefs31 <- sem.coefs(e.list31,e)
+e.coefs31$lowCI <- e.coefs31$estimate - 2*e.coefs31$std.error
+e.coefs31$upCI <- e.coefs31$estimate + 2*e.coefs31$std.error
 
 
-setwd("~/Phd/First chapter/Path analysis/Results2")
+setwd("~/First chapter/Path analysis/Results2")
 pdf(file = "Mecal_T.pdf")
 par(mar=c(1,1,1,1))
 
@@ -531,7 +546,7 @@ PlotPath(e.coefs31
          ,col.neg="red"
          ,col.non.signifi="grey"
          ,Treatment.name= "TILLAGE"
-         ,Species.name="PRESENCE \n MECAL"
+         ,Species.name="PRESENCE \n CL"
          ,cex.category = 0.5
          ,plot.axis=FALSE
          ,estimate.box.width=c(3, 1),
@@ -622,6 +637,8 @@ e.list0 <- list(
        family = "binomial"(link = "logit"), data = e) )
 
 e.fit0 <- sem.fit(e.list0, e) # AIC = 606.8
+x0 <- rsquared(e.list0) # R2 = 0.29
+
 
 # Random intercept Year
 e.list1 <- list( 
@@ -641,9 +658,10 @@ e.list1 <- list(
          family = "binomial"(link = "logit"), data = e))
 
 e.fit1 <- sem.fit(e.list1, e) # AIC = 653.73
+x1 <- rsquared(e.list1) # Conditional R2 = 0.31
 
 
-# LOWEST AIC: NO RANDOM EFFECTS
+# LOWEST AIC AND BEST R2: NO RANDOM EFFECTS
 
 e.list01 <- list( 
   lm( Cover ~ Treatment + par + area, data = e),
@@ -661,9 +679,14 @@ e.list01 <- list(
        family = "binomial"(link = "logit"), data = e) )
 
 e.fit01 <- sem.fit(e.list01, e) 
-e.coefs01 <- sem.coefs(e.list01,e)
+x01 <- rsquared(e.list01) # Conditional R2 = 0.29
 
-setwd("~/Phd/First chapter/Path analysis/Results2")
+
+e.coefs01 <- sem.coefs(e.list01,e)
+e.coefs01$lowCI <- e.coefs01$estimate - 2*e.coefs01$std.error
+e.coefs01$upCI <- e.coefs01$estimate + 2*e.coefs01$std.error
+
+setwd("~/First chapter/Path analysis/Results2")
 pdf(file = "Mecal_A.pdf")
 par(mar=c(1,1,1,1))
 
@@ -678,7 +701,7 @@ PlotPath(e.coefs01
          ,col.neg="red"
          ,col.non.signifi="grey"
          ,Treatment.name= "ALFALFA"
-         ,Species.name="PRESENCE \n MECAL"
+         ,Species.name="PRESENCE \n CL"
          ,cex.category = 0.5
          ,plot.axis=FALSE
          ,estimate.box.width=c(3, 1),

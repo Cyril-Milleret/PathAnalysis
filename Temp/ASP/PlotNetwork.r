@@ -1,13 +1,13 @@
 
-setwd("~/Path analysis")
-pdf(file = "Path_Network.pdf")
+setwd("~/First chapter/Path analysis")
+pdf(file = "Path_Network_Simple.pdf")
 
   offset.poly = 2 
-  cex.text = 0.6              
-  cex.text1 = 0.75
+  cex.text = 0.5              
+  cex.text1 = 0.6
   cex.category = 0.6 
-  Treatment.name="TREATMENT"  
-  Species.name="SPECIES"
+  Treatment.name="AGRICULTURAL \n PRACTICE"  
+  Species.name="SPECIES \n PRESENCE"
   
   
   require(sp)
@@ -31,14 +31,14 @@ pdf(file = "Path_Network.pdf")
   
   plot(myStudyArea.poly, xlim=c(-20,70), ylim=c(-30,60), border="white")
   
-    #axis(1)
+   # axis(1)
     #axis(2)
  
 
   
   # ==== I. DEFINE THE BASIC PATH STRUCTURE ==== # Define position of boxes
   # ---- 1. Treatment/ PRESENCE ---- 
-  Treatment=cbind(c(-20,-6,-6,-20), c(16,16,23,23)) # 1st column X : bottomleft, bottom right, topright, topleft.# 2nd column Y
+  Treatment=cbind(c(-22,-6,-6,-22), c(16,16,23,23)) # 1st column X : bottomleft, bottom right, topright, topleft.# 2nd column Y
   polygon(Treatment[,1], Treatment[,2], col =  adjustcolor("orange",alpha.f = 0.5), border = "white")
   text(mean(Treatment[,1]),mean(Treatment[,2]), Treatment.name, cex = cex.text1)
   
@@ -170,13 +170,13 @@ pdf(file = "Path_Network.pdf")
   
   
   polygon(par[,1], par[,2], col =  adjustcolor("brown",alpha.f = 0.5), border = "white")
-  text(mean(par[,1]),mean(par[,2]), "PAR", cex = cex.text)
+  text(mean(par[,1]),mean(par[,2]), "MPAR", cex = cex.text)
   
   polygon(Fallow[,1], Fallow[,2], col =  adjustcolor("brown",alpha.f = 0.5), border = "white")
   text(mean(Fallow[,1]),mean(Fallow[,2]), "FALLOW", cex = cex.text)
   
   polygon(Irrig[,1], Irrig[,2], col =  adjustcolor("brown",alpha.f = 0.5), border = "white")
-  text(mean(Irrig[,1]),mean(Irrig[,2]), "IRRIGATION", cex = cex.text)
+  text(mean(Irrig[,1]),mean(Irrig[,2]), "CROP DIVERSITY", cex = cex.text)
   
   polygon(area[,1], area[,2], col =  adjustcolor("yellow",alpha.f = 0.5), border = "white")
   text(mean(area[,1]),mean(area[,2]), "FIELD AREA", cex = cex.text)
@@ -236,8 +236,8 @@ pdf(file = "Path_Network.pdf")
         biom[3,2],
         mean(Pres[3,2]) )
   
-  let <- c("D", "D", "D", "C", "C", "B", "B", "A", "L", "L", "K", "K", "J", 
-           "G", "G", "G", "G", "G", "I", "I", "I", "I", "M", "M", "M", "H", "O")
+  let <- c("1", "1", "1", "1", "1", "1", "1", "1", "3", "3", "3", "3", "3", 
+           "2", "2", "2", "2", "2", "2", "2", "2", "2", "3", "3", "3", "2", "3")
   
 #  for(i in 1:length(x0)){ # For all grey
     
@@ -309,7 +309,7 @@ pdf(file = "Path_Network.pdf")
     draw.circle(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5, mean(c(mean(Irrig[3:2,2]), mean(Irrig[3:2,2]))), radius = 1.3, 
                      border = adjustcolor("blue",alpha.f = 0.5), col = "white")
     
-    text(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5 , mean(c(mean(mean(Irrig[3:2,2])), mean(Irrig[3:2,2]))),"N", cex = 0.7, 
+    text(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5 , mean(c(mean(mean(Irrig[3:2,2])), mean(Irrig[3:2,2]))),"3", cex = 0.7, 
          col = adjustcolor("blue",alpha.f = 0.5))
     
 
@@ -325,7 +325,7 @@ pdf(file = "Path_Network.pdf")
     draw.circle(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5, mean(c(mean(Fallow[3:2,2]), mean(Fallow[3:2,2]))), radius = 1.3, 
                 border = adjustcolor("blue",alpha.f = 0.5), col = "white")
     
-    text(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5 , mean(c(mean(Fallow[3:2,2]), mean(Fallow[3:2,2]))),"N", cex = 0.7, 
+    text(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5 , mean(c(mean(Fallow[3:2,2]), mean(Fallow[3:2,2]))),"3", cex = 0.7, 
          col = adjustcolor("blue",alpha.f = 0.5))
     
     
@@ -341,7 +341,7 @@ pdf(file = "Path_Network.pdf")
     draw.circle(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5, mean(c(mean(par[3:2,2]), mean(par[3:2,2]))), radius = 1.3, 
                 border = adjustcolor("blue",alpha.f = 0.5), col = "white")
     
-    text(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5 , mean(c(mean(par[3:2,2]), mean(par[3:2,2]))),"N", cex = 0.7, 
+    text(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5 , mean(c(mean(par[3:2,2]), mean(par[3:2,2]))),"3", cex = 0.7, 
          col = adjustcolor("blue",alpha.f = 0.5))
     
     
@@ -356,44 +356,44 @@ pdf(file = "Path_Network.pdf")
     draw.circle(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5, mean(c(mean(tbl[3:2,2]), mean(tbl[3:2,2]))), radius = 1.3, 
                 border = adjustcolor("blue",alpha.f = 0.5), col = "white")
     
-    text(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5 , mean(c(mean(tbl[3:2,2]), mean(tbl[3:2,2]))),"N", cex = 0.7, 
+    text(mean(c(mean(Irrig[2,1]), mean(Pres[1:2,1])+6))-2.5 , mean(c(mean(tbl[3:2,2]), mean(tbl[3:2,2]))),"3", cex = 0.7, 
          col = adjustcolor("blue",alpha.f = 0.5))
     
     
     #CORRELATED ERRORS
     
     
-    arrows(x0=mean(Cover1[2,1]), x1=mean(SAI_sd[1,1]), y0=mean(Cover1[2:3,2]), y1= mean(SAI_sd[2:3,2]), length = 0, 
-           lwd=1, col= "red",lty = "dashed")
-    
-    draw.circle(mean ( c(mean(Cover1[2,1]), mean(SAI_sd[1,1])) ) - 6, mean( c(mean(Cover1[2:3,2]), mean(SAI_sd[2:3,2])) ) - 4, radius = 1.3, 
-                border = "red", col = "white")
-                
-    text( mean ( c(mean(Cover1[2,1]), mean(SAI_sd[1,1])) ) - 6, mean( c(mean(Cover1[2:3,2]), mean(SAI_sd[2:3,2])) ) - 4,"F", cex = 0.7, 
-         col = "red")
-    
-    
-    
-    
-    arrows(x0=mean(Height1[2,1]), x1=mean(SAI_sd[1,1]), y0=mean(Height1[2:3,2]), y1= mean(SAI_sd[2:3,2]), length = 0, 
-           lwd=1, col= "red",lty = "dashed")
-    
-    draw.circle(mean ( c(mean(Height1[2,1]), mean(SAI_sd[1,1])) ) - 6, mean( c(mean(Height1[2:3,2]), mean(SAI_sd[2:3,2])) ) - 6, radius = 1.3, 
-                border = "red", col = "white")
-    
-    text( mean ( c(mean(Height1[2,1]), mean(SAI_sd[1,1])) ) - 6, mean( c(mean(Height1[2:3,2]), mean(SAI_sd[2:3,2])) ) - 6 ,"F", cex = 0.7, 
-          col = "red")
+ #   arrows(x0=mean(Cover1[2,1]), x1=mean(SAI_sd[1,1]), y0=mean(Cover1[2:3,2]), y1= mean(SAI_sd[2:3,2]), length = 0, 
+ #          lwd=1, col= "red",lty = "dashed")
+ #   
+ #   draw.circle(mean ( c(mean(Cover1[2,1]), mean(SAI_sd[1,1])) ) - 6, mean( c(mean(Cover1[2:3,2]), mean(SAI_sd[2:3,2])) ) - 4, radius = 1.3, 
+ #               border = "red", col = "white")
+ #               
+ #   text( mean ( c(mean(Cover1[2,1]), mean(SAI_sd[1,1])) ) - 6, mean( c(mean(Cover1[2:3,2]), mean(SAI_sd[2:3,2])) ) - 4,"F", cex = 0.7, 
+ #        col = "red")
+ #   
     
     
     
-    curvedarrow(from = c(SAI_sd[2,1],mean(SAI_sd[2:3,2])), to = c(LAI_sd[2,1],mean(LAI_sd[2:3,2])), 
-                lwd = 1, code = 3, lcol = "red", lty = "dashed", curve = -0.7, arr.pos = 1, arr.type = "simple", col = "red", arr.col = "red",
-                arr.length = 0.3) #Error when adding code = 3 for double-headed arrow
+ #   arrows(x0=mean(Height1[2,1]), x1=mean(SAI_sd[1,1]), y0=mean(Height1[2:3,2]), y1= mean(SAI_sd[2:3,2]), length = 0, 
+ #          lwd=1, col= "red",lty = "dashed")
+ #   
+ #   draw.circle(mean ( c(mean(Height1[2,1]), mean(SAI_sd[1,1])) ) - 6, mean( c(mean(Height1[2:3,2]), mean(SAI_sd[2:3,2])) ) - 6, radius = 1.3, 
+ #               border = "red", col = "white")
+ #   
+ #   text( mean ( c(mean(Height1[2,1]), mean(SAI_sd[1,1])) ) - 6, mean( c(mean(Height1[2:3,2]), mean(SAI_sd[2:3,2])) ) - 6 ,"F", cex = 0.7, 
+ #         col = "red")
+ #   
     
-    draw.circle( 33, mean( c(mean(SAI_sd[2:3,2]), mean(LAI_sd[2:3,2])) ), radius = 1.3, 
-                border = "red", col = "white")
     
-    text( 33, mean( c(mean(SAI_sd[2:3,2]), mean(LAI_sd[2:3,2])) ),"E", cex = 0.7, col = "red")
+ #   curvedarrow(from = c(SAI_sd[2,1],mean(SAI_sd[2:3,2])), to = c(LAI_sd[2,1],mean(LAI_sd[2:3,2])), 
+ #               lwd = 1, code = 3, lcol = "red", lty = "dashed", curve = -0.7, arr.pos = 1, arr.type = "simple", col = "red", arr.col = "red",
+ #               arr.length = 0.3) #Error when adding code = 3 for double-headed arrow
+ #   
+ #   draw.circle( 33, mean( c(mean(SAI_sd[2:3,2]), mean(LAI_sd[2:3,2])) ), radius = 1.3, 
+ #               border = "red", col = "white")
+ #   
+ #   text( 33, mean( c(mean(SAI_sd[2:3,2]), mean(LAI_sd[2:3,2])) ),"E", cex = 0.7, col = "red")
     
     
 

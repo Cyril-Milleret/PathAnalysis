@@ -1,7 +1,7 @@
 
 # Plot of meta-model in Appendix
 rm(list=ls())
-setwd("~/Path analysis/Path_species")
+setwd("~/First chapter/Path analysis")
 pdf(file = "Path_Simple.pdf")
 
   require(sp) 
@@ -24,33 +24,33 @@ pdf(file = "Path_Simple.pdf")
   
   plot(myStudyArea.poly, xlim=c(-20,70), ylim=c(-30,60), border="white")
   
-    axis(1)
-    axis(2)
+    #axis(1)
+    #axis(2)
   
     # ==== I. DEFINE THE BASIC PATH STRUCTURE ==== # Define position of boxes
     # ---- 1. Treatment/ PRESENCE ---- 
     Treatment=cbind(c(-23,-3,-3,-23), c(16,16,23,23)) # 1st column X : bottomleft, bottom right, topright, topleft.# 2nd column Y
     polygon(Treatment[,1], Treatment[,2], col =  adjustcolor("orange",alpha.f = 0.5), border = "white")
-    text(mean(Treatment[,1]),mean(Treatment[,2]), "TREATMENT", cex = 1)
+    text(mean(Treatment[,1]),mean(Treatment[,2]), "AGRICULTURAL \n PRACTICE", cex = 0.75)
     
     Pres=cbind(c(48,72,72,48), c(16,16,23,23))
     polygon(Pres[,1], Pres[,2], col =  adjustcolor("blue",alpha.f = 0.5), border = "white")
-    text(mean(Pres[,1]),mean(Pres[,2]), "PRESENCE", cex = 1) 
+    text(mean(Pres[,1]),mean(Pres[,2]), "SPECIES \n PRESENCE", cex = 0.75) 
     
     # ---- 2. FOOD ---- 
     Food=cbind(c(12,32,32,12), c(-10,-10,-3,-3))
     polygon(Food[,1], Food[,2], col =  adjustcolor("purple",alpha.f = 0.5), border = "white")
-    text(mean(Food[,1]),mean(Food[,2]), "FOOD", cex = 1)
+    text(mean(Food[,1]),mean(Food[,2]), "FOOD", cex = 0.75)
 
     # ---- 3. VEGETATION  ---- 
     Height=cbind(c(12,32,32,12), c(40,40,47,47))  
     polygon(Height[,1], Height[,2], col =  adjustcolor("green",alpha.f = 0.5), border = "white")
-    text(mean(Height[,1]),mean(Height[,2]), "VEGETATION", cex = 1)
+    text(mean(Height[,1]),mean(Height[,2]), "VEGETATION", cex = 0.75)
     
     # ---- 4. LANDSCAPE  ---- 
     tbl=cbind(c(48,72,72,48), c(-10,-10,-3,-3))
     polygon(tbl[,1], tbl[,2], col =  adjustcolor("brown",alpha.f = 0.5), border = "white")
-    text(mean(tbl[,1]),mean(tbl[,2]), "LANDSCAPE", cex = 1)
+    text(mean(tbl[,1]),mean(tbl[,2]), "LANDSCAPE", cex = 0.75)
     
     
     # ==== II. ADD THE ARROW ====  

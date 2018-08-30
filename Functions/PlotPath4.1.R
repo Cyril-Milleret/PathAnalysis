@@ -1,5 +1,5 @@
 
-#No direct arrow; + field area; - LAI (PARA ALCARAVÁN Y CALANDRIA); Proportional to effect size and p-value
+#No direct arrow; + field area; - SAI (Para SISÓN); Proportional to effect size and p-value
 
 PlotPath <- function(e.coefs
                      ,
