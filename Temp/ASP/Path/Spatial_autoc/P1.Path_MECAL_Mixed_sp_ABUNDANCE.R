@@ -1,7 +1,8 @@
 
 rm(list=ls())
 
-#PATH ANALYSIS MECAL 
+#PATH ANALYSIS MECAL: ABUNDANCE RESPONSE FOR SUPPLEMENTARY MATERIAL
+
 #Plot with PlotPath3.1 (-LAI) (Updated psem)
 ## Included gaussian spatial autocorrelation
 
@@ -18,9 +19,27 @@ setwd("C:/Users/Ana/Documents/PhD/First chapter/Datos/Datos barbechos arrendados
 sp <- read.csv("Data_path_submission2_sp.csv", sep = ",", header=TRUE, fill = TRUE)
 sp <- sp[which(sp$Species == "CL"), ]
 
+# Rescue the variable with the counts
+setwd("C:/Users/Ana/Documents/PhD/First chapter/Datos/Datos barbechos arrendados/Variables")
+
+f <- read.csv("Variables.csv", sep = ",", header=TRUE, fill = TRUE)
+colnames(f)[6] <- "EspecieObj"
+f <- f[which(f$EspecieObj == "MECAL"), ]
+
+
+f[f == 99.00] <- NA
+f <- f[-which(duplicated(f[ , 2:15])), ]
+f <- f[which(complete.cases(f$Contatge)), ]
+f <- na.omit(f)
+f2 <-f[-which(duplicated(f[ , 12])), ] 
+counts <- f2[ ,c(12,7)]
+
+sp2 <- left_join(sp,counts)
+colnames(sp2)[25] <- "ab"
+
 ################################### PICAR Y HERBICIDAR #################################################################### 
 
-e <- sp[ which(sp$agri_practice %in% c("C", "S+H")), ] #Select treatment
+e <- sp2[ which(sp2$agri_practice %in% c("C", "S+H")), ] #Select treatment
 
 e <- e %>% 
   unnest(agri_practice) %>% 
@@ -55,6 +74,12 @@ e$Fallow<-scale(e$Fallow)
 e$crop_diver<-scale(e$crop_diver)
 e$area <- scale(e$area)
 
+# Check overdispersion
+m<-mean(e$ab)
+v<-var(e$ab)
+ratio<-v/m
+ratio 
+
 
 #PATH ANALYSIS
 
@@ -73,10 +98,10 @@ e.list2 <- psem(
        correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   lme( SAI_sd ~ Treatment + Cover + Height, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   
-  glmmPQL( Pres ~ Cover + Height + Cover_dead + Heter + Diver + biom + 
+  glmmPQL( ab ~ Cover + Height + Cover_dead + Heter + Diver + biom + 
              SAI_sd + Fallow + crop_diver + par + tbl + area, correlation = corGaus(form = ~ Lon_x + Lat_y),
            random = ~ 1 | Year,
-           family = "binomial",data = e))
+           family = "quasipoisson",data = e))
 
 e.fit2 <- summary(e.list2)
 
@@ -88,31 +113,30 @@ e.list21 <- psem(
   lme( Cover_dead ~ Treatment + crop_diver + area + Cover + Fallow, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   lme( Height ~ Treatment + Cover + crop_diver + area + Fallow + Cover_dead, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   lme( Heter ~ Treatment + crop_diver + Cover + Cover_dead, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
-  lme( Diver ~ Treatment + par + area + Cover + Height + Cover_dead, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
+  lme( Diver ~ Treatment +  par + area + Cover + Height + Cover_dead, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   
   lme( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
          Cover + Height + Cover_dead + Heter + Diver, 
        correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   lme( SAI_sd ~ Treatment + Cover + Height, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   
-  glmmPQL( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+  glmmPQL( ab ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
              SAI_sd + Fallow + crop_diver + par + tbl + area, correlation = corGaus(form = ~ Lon_x + Lat_y),
            random = ~ 1 | Year,
-           family = "binomial",data = e))
+           family = "quasipoisson",data = e))
 
-e.fit21 <- summary(e.list21) # r2= 0.43
+e.fit21 <- summary(e.list21) #0.24
 
-# conditional R2, which describes the proportion of variance explained by both 
-#the fixed and random factors
 
 e.coefs21 <- coefs(e.list21) 
 e.coefs21$lowCI <- e.coefs21$Estimate - 2*e.coefs21$Std.Error
 e.coefs21$upCI <- e.coefs21$Estimate + 2*e.coefs21$Std.Error
 
+#PLOT IS WRONG, CHECK!
 
-setwd("C:/Users/Ana/Documents/PhD/First chapter/Path analysis/Results_sp")
+setwd("C:/Users/Ana/Documents/PhD/First chapter/Path analysis/Results_sp/Abundance_Mecal")
 
-pdf(file = "Mecal_SH_Y_sp.pdf")
+pdf(file = "Mecal_AB_SH_Y_sp.pdf")
 par(mar=c(1,1,1,1))
 
 
@@ -127,7 +151,7 @@ PlotPath(e.coefs21
          ,col.neg="red"
          ,col.non.signifi="grey"
          ,Treatment.name= "SHREDDING +\n HERBICIDE"
-         ,Species.name="PRESENCE \n CL"
+         ,Species.name="ABUNDANCE \n CL"
          ,cex.category = 0.5
          ,plot.axis=FALSE
          ,estimate.box.width=c(2, 1),

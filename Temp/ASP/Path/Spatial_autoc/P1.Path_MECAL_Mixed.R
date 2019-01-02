@@ -8,7 +8,7 @@ library(piecewiseSEM)
 library(nlme)
 library(lme4)
 
-setwd("~/Datos/Datos barbechos arrendados/Variables")
+setwd("C:/Users/Ana/Documents/PhD/First chapter/Datos/Datos barbechos arrendados/Variables")
 
 f <- read.csv("Variables.csv", sep = ",", header=TRUE, fill = TRUE)
 colnames(f)[6] <- "EspecieObj"
