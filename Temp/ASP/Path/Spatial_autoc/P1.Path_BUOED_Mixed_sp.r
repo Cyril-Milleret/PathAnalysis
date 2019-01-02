@@ -1,7 +1,7 @@
 rm(list=ls())
 
 # PATH ANALYSIS BUOED. 
-# Try path dirty with gaussian autocorrelation just to see if it runs
+# Included gaussian spatial autocorrelation
 # - Plot with PlotPath3.1 (-LAI)
 
 library(dplyr)
