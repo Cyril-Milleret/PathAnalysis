@@ -54,13 +54,13 @@ length(which(e$Zone == "ORIENTAL" & e$C == "1"))
 e <- e[-which(e$Zone == "ORIENTAL"), ] # Delete oriental because only 0 and no use of Zone
 
 
-colnames(e)[8] <- "Pres"
+colnames(e)[24] <- "Pres" # Change the name variable counts to Pres, to make it fit easier with the plot
 colnames(e)[12] <- "Diver"
 colnames(e)[13] <- "Heter"
 colnames(e)[16] <- "par"
 colnames(e)[17] <- "Fallow"
 colnames(e)[21] <- "crop_diver"
-colnames(e)[25] <- "Treatment"
+colnames(e)[26] <- "Treatment"
 
 e$Cover<-scale(e$Cover)
 e$Height<-scale(e$Height)
@@ -74,9 +74,9 @@ e$Fallow<-scale(e$Fallow)
 e$crop_diver<-scale(e$crop_diver)
 e$area <- scale(e$area)
 
-# Check overdispersion
-m<-mean(e$ab)
-v<-var(e$ab)
+# Check overdispersion: Use quasipoisson
+m<-mean(e$Pres)
+v<-var(e$Pres)
 ratio<-v/m
 ratio 
 
@@ -98,47 +98,45 @@ e.list2 <- psem(
        correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   lme( SAI_sd ~ Treatment + Cover + Height, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   
-  glmmPQL( ab ~ Cover + Height + Cover_dead + Heter + Diver + biom + 
+  glmmPQL( Pres ~ Cover + Height + Cover_dead + Heter + Diver + biom + 
              SAI_sd + Fallow + crop_diver + par + tbl + area, correlation = corGaus(form = ~ Lon_x + Lat_y),
            random = ~ 1 | Year,
            family = "quasipoisson",data = e))
 
 e.fit2 <- summary(e.list2)
 
-# Fill with missing paths
+#. Fill with missing paths
 
 e.list21 <- psem( 
   lme( Cover ~ Treatment + crop_diver + area, random =  ~ 1|Year, correlation = corGaus(form = ~ Lon_x + Lat_y),
        data = e, method = 'REML'),
-  lme( Cover_dead ~ Treatment + crop_diver + area + Cover + Fallow, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
-  lme( Height ~ Treatment + Cover + crop_diver + area + Fallow + Cover_dead, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
-  lme( Heter ~ Treatment + crop_diver + Cover + Cover_dead, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
-  lme( Diver ~ Treatment +  par + area + Cover + Height + Cover_dead, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
+  lme( Cover_dead ~ Treatment + crop_diver + area + Cover, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
+  lme( Height ~ Treatment + Cover, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
+  lme( Heter ~ Treatment + crop_diver + Cover, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
+  lme( Diver ~ Treatment + par + area + Cover + Height, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   
   lme( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
          Cover + Height + Cover_dead + Heter + Diver, 
        correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   lme( SAI_sd ~ Treatment + Cover + Height, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   
-  glmmPQL( ab ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+  glmmPQL( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
              SAI_sd + Fallow + crop_diver + par + tbl + area, correlation = corGaus(form = ~ Lon_x + Lat_y),
            random = ~ 1 | Year,
            family = "quasipoisson",data = e))
 
-e.fit21 <- summary(e.list21) #0.24
+e.fit21 <- summary(e.list21) # 0.24
+e.coefs21 <- coefs(e.list21)
 
 
-e.coefs21 <- coefs(e.list21) 
 e.coefs21$lowCI <- e.coefs21$Estimate - 2*e.coefs21$Std.Error
 e.coefs21$upCI <- e.coefs21$Estimate + 2*e.coefs21$Std.Error
 
-#PLOT IS WRONG, CHECK!
 
 setwd("C:/Users/Ana/Documents/PhD/First chapter/Path analysis/Results_sp/Abundance_Mecal")
 
 pdf(file = "Mecal_AB_SH_Y_sp.pdf")
 par(mar=c(1,1,1,1))
-
 
 PlotPath(e.coefs21
          ,cex.text =0.6
@@ -163,7 +161,7 @@ dev.off()
 
 ####################################### PICAR #############################################
 
-e <- sp[ which(sp$agri_practice %in% c("C", "S")), ] #Select treatment
+e <- sp2[ which(sp2$agri_practice %in% c("C", "S")), ] #Select treatment
 
 e <- e %>% 
   unnest(agri_practice) %>% 
@@ -176,13 +174,13 @@ length(which(e$Zone == "OCCIDENTAL" & e$C == "1"))
 length(which(e$Zone == "ORIENTAL" & e$C == "1")) 
 
 
-colnames(e)[8] <- "Pres"
+colnames(e)[24] <- "Pres" # Change the name variable counts to Pres, to make it fit easier with the plot
 colnames(e)[12] <- "Diver"
 colnames(e)[13] <- "Heter"
 colnames(e)[16] <- "par"
 colnames(e)[17] <- "Fallow"
 colnames(e)[21] <- "crop_diver"
-colnames(e)[25] <- "Treatment"
+colnames(e)[26] <- "Treatment"
 
 e$Cover<-scale(e$Cover)
 e$Height<-scale(e$Height)
@@ -195,6 +193,14 @@ e$par<-scale(e$par)
 e$Fallow<-scale(e$Fallow)
 e$crop_diver<-scale(e$crop_diver)
 e$area <- scale(e$area)
+
+# Check overdispersion: Use quasipoisson
+m<-mean(e$Pres)
+v<-var(e$Pres)
+ratio<-v/m
+ratio 
+
+
 
 #PATH ANALYSIS
 
@@ -216,7 +222,7 @@ e.list2 <- psem(
   glmmPQL( Pres ~ Cover + Height + Cover_dead + Heter + Diver + biom + 
              SAI_sd + Fallow + crop_diver + par + tbl + area, correlation = corGaus(form = ~ Lon_x + Lat_y),
            random = ~ 1 | Year,
-           family = "binomial",data = e))
+           family = "quasipoisson",data = e))
 
 e.fit2 <- summary(e.list2)
 
@@ -236,21 +242,21 @@ e.list21 <- psem(
        correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   lme( SAI_sd ~ Treatment + Cover + Height + tbl, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   
-  glmmPQL( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
+  glmmPQL( Pres ~ Cover + Height + Cover_dead + Heter + Diver + biom + 
              SAI_sd + Fallow + crop_diver + par + tbl + area, correlation = corGaus(form = ~ Lon_x + Lat_y),
            random = ~ 1 | Year,
-           family = "binomial",data = e))
+           family = "quasipoisson",data = e))
 
-e.fit21 <- summary(e.list21) #0.27
+e.fit21 <- summary(e.list21)
 
 e.coefs21 <- coefs(e.list21) 
 e.coefs21$lowCI <- e.coefs21$Estimate - 2*e.coefs21$Std.Error
 e.coefs21$upCI <- e.coefs21$Estimate + 2*e.coefs21$Std.Error
 
 
-setwd("C:/Users/Ana/Documents/PhD/First chapter/Path analysis/Results_sp")
+setwd("C:/Users/Ana/Documents/PhD/First chapter/Path analysis/Results_sp/Abundance_Mecal")
 
-pdf(file = "Mecal_S_Y_sp.pdf")
+pdf(file = "Mecal_AB_S_Y_sp.pdf")
 par(mar=c(1,1,1,1))
 PlotPath(e.coefs21
          ,cex.text =0.6
@@ -263,7 +269,7 @@ PlotPath(e.coefs21
          ,col.neg="red"
          ,col.non.signifi="grey"
          ,Treatment.name= "SHREDDING"
-         ,Species.name="PRESENCE \n CL"
+         ,Species.name="ABUNDANCE \n CL"
          ,cex.category = 0.5
          ,plot.axis=FALSE
          ,estimate.box.width=c(3, 1),
@@ -271,9 +277,10 @@ PlotPath(e.coefs21
          digits.estimate = 2)
 dev.off()
 
+
 ####################################### LABRAR #############################################
 
-e <- sp[ which(sp$agri_practice %in% c("C", "T")), ] #Select treatment
+e <- sp2[ which(sp2$agri_practice %in% c("C", "T")), ] #Select treatment
 
 e <- e %>% 
   unnest(agri_practice) %>% 
@@ -286,13 +293,13 @@ length(which(e$Zone == "OCCIDENTAL" & e$C == "1"))
 length(which(e$Zone == "ORIENTAL" & e$C == "1")) 
 
 
-colnames(e)[8] <- "Pres"
+colnames(e)[24] <- "Pres" # Change the name variable counts to Pres, to make it fit easier with the plot
 colnames(e)[12] <- "Diver"
 colnames(e)[13] <- "Heter"
 colnames(e)[16] <- "par"
 colnames(e)[17] <- "Fallow"
 colnames(e)[21] <- "crop_diver"
-colnames(e)[25] <- "Treatment"
+colnames(e)[26] <- "Treatment"
 
 e$Cover<-scale(e$Cover)
 e$Height<-scale(e$Height)
@@ -305,6 +312,12 @@ e$par<-scale(e$par)
 e$Fallow<-scale(e$Fallow)
 e$crop_diver<-scale(e$crop_diver)
 e$area <- scale(e$area)
+
+# Check overdispersion: Use quasipoisson
+m<-mean(e$Pres)
+v<-var(e$Pres)
+ratio<-v/m
+ratio 
 
 #PATH ANALYSIS
 
@@ -326,29 +339,29 @@ e.list2 <- psem(
   glmmPQL( Pres ~ Cover + Height + Cover_dead + Heter + Diver + biom + 
              SAI_sd + Fallow + crop_diver + par + tbl + area, correlation = corGaus(form = ~ Lon_x + Lat_y),
            random = ~ 1 | Year,
-           family = "binomial",data = e))
+           family = "quasipoisson",data = e))
 
 e.fit2 <- summary(e.list2)
 
 # Fill with missing paths
 
 e.list21 <- psem( 
-  lme( Cover ~ Treatment + par + tbl + area, random =  ~ 1|Year, correlation = corGaus(form = ~ Lon_x + Lat_y),
+  lme( Cover ~ Treatment +  par + tbl + area , random =  ~ 1|Year, correlation = corGaus(form = ~ Lon_x + Lat_y),
        data = e, method = 'REML'),
-  lme( Cover_dead ~ Treatment + Fallow + par + Cover + tbl, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
+  lme( Cover_dead ~ Treatment + Fallow +  par + area + Cover + tbl , correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   lme( Height ~ Treatment + Fallow + Cover + tbl, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
-  lme( Heter ~ Treatment + crop_diver + par + tbl + Height, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
-  lme( Diver ~ Treatment + par + area + Cover + Cover_dead + Height, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
+  lme( Heter ~ Treatment + crop_diver +  par + tbl + Height, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
+  lme( Diver ~ Treatment +  par + area + Cover + Cover_dead + Height, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   
   lme( biom ~ Treatment + Fallow + crop_diver + par + tbl + 
-         Cover + Height + Cover_dead + Heter + Diver + area, 
+         Cover + Height + Cover_dead + Heter + Diver + area , 
        correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
-  lme( SAI_sd ~ Treatment + Cover + Height + tbl + area, correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
+  lme( SAI_sd ~ Treatment + Cover + Height + tbl + area , correlation = corGaus(form = ~ Lon_x + Lat_y), random = ~ 1 | Year, data = e, method = 'REML'),
   
   glmmPQL( Pres ~ Cover + Height + Cover_dead + Heter + Diver + biom + 
              SAI_sd + Fallow + crop_diver + par + tbl + area, correlation = corGaus(form = ~ Lon_x + Lat_y),
            random = ~ 1 | Year,
-           family = "binomial",data = e))
+           family = "quasipoisson",data = e))
 
 e.fit21 <- summary(e.list21)
 
@@ -357,9 +370,9 @@ e.coefs21$lowCI <- e.coefs21$Estimate - 2*e.coefs21$Std.Error
 e.coefs21$upCI <- e.coefs21$Estimate + 2*e.coefs21$Std.Error
 
 
-setwd("C:/Users/Ana/Documents/PhD/First chapter/Path analysis/Results_sp")
+setwd("C:/Users/Ana/Documents/PhD/First chapter/Path analysis/Results_sp/Abundance_Mecal")
 
-pdf(file = "Mecal_T_Y_sp.pdf")
+pdf(file = "Mecal_AB_T_Y_sp.pdf")
 par(mar=c(1,1,1,1))
 PlotPath(e.coefs21
          ,cex.text =0.6
@@ -372,7 +385,7 @@ PlotPath(e.coefs21
          ,col.neg="red"
          ,col.non.signifi="grey"
          ,Treatment.name= "TILLAGE"
-         ,Species.name="PRESENCE \n CL"
+         ,Species.name="ABUNDANCE \n CL"
          ,cex.category = 0.5
          ,plot.axis=FALSE
          ,estimate.box.width=c(3, 1),
@@ -383,7 +396,7 @@ dev.off()
 
 ####################################### ALFALFA #############################################
 
-e <- sp[ which(sp$agri_practice %in% c("C", "A")), ] #Select treatment
+e <- sp2[ which(sp2$agri_practice %in% c("C", "A")), ] #Select treatment
 
 e <- e %>% 
   unnest(agri_practice) %>% 
@@ -398,13 +411,13 @@ length(which(e$Zone == "ORIENTAL" & e$C == "1"))
 e <- e[-which(e$Zone == "OCCIDENTAL"), ] # Delete oriental because only 0 
 
 
-colnames(e)[8] <- "Pres"
+colnames(e)[24] <- "Pres" # Change the name variable counts to Pres, to make it fit easier with the plot
 colnames(e)[12] <- "Diver"
 colnames(e)[13] <- "Heter"
 colnames(e)[16] <- "par"
 colnames(e)[17] <- "Fallow"
 colnames(e)[21] <- "crop_diver"
-colnames(e)[25] <- "Treatment"
+colnames(e)[26] <- "Treatment"
 
 e$Cover<-scale(e$Cover)
 e$Height<-scale(e$Height)
@@ -417,6 +430,12 @@ e$par<-scale(e$par)
 e$Fallow<-scale(e$Fallow)
 e$crop_diver<-scale(e$crop_diver)
 e$area <- scale(e$area)
+
+# Check overdispersion: Use quasipoisson
+m<-mean(e$Pres)
+v<-var(e$Pres)
+ratio<-v/m
+ratio 
 
 # Random intercept Year
 
@@ -436,7 +455,7 @@ e.list2 <- psem(
   glmmPQL( Pres ~ Cover + Height + Cover_dead + Heter + Diver + biom + 
              SAI_sd + Fallow + crop_diver + par + tbl + area, correlation = corGaus(form = ~ Lon_x + Lat_y),
            random = ~ 1 | Year,
-           family = "binomial",data = e))
+           family = "quasipoisson",data = e))
 
 e.fit2 <- summary(e.list2)
 
@@ -458,17 +477,18 @@ e.list21 <- psem(
   glmmPQL( Pres ~ Treatment + Cover + Height + Cover_dead + Heter + Diver + biom + 
              SAI_sd + Fallow + crop_diver + par + tbl + area, correlation = corGaus(form = ~ Lon_x + Lat_y),
            random = ~ 1 | Year,
-           family = "binomial",data = e))
+           family = "quasipoisson",data = e))
 
 e.fit21 <- summary(e.list21)
+
 e.coefs21 <- coefs(e.list21) 
 e.coefs21$lowCI <- e.coefs21$Estimate - 2*e.coefs21$Std.Error
 e.coefs21$upCI <- e.coefs21$Estimate + 2*e.coefs21$Std.Error
 
 
-setwd("C:/Users/Ana/Documents/PhD/First chapter/Path analysis/Results_sp")
+setwd("C:/Users/Ana/Documents/PhD/First chapter/Path analysis/Results_sp/Abundance_Mecal")
 
-pdf(file = "Mecal_A_Y_sp.pdf")
+pdf(file = "Mecal_AB_A_Y_sp.pdf")
 par(mar=c(1,1,1,1))
 PlotPath(e.coefs21
          ,cex.text =0.6
@@ -481,7 +501,7 @@ PlotPath(e.coefs21
          ,col.neg="red"
          ,col.non.signifi="grey"
          ,Treatment.name= "ALFALFA"
-         ,Species.name="PRESENCE \n CL"
+         ,Species.name="ABUNDANCE \n CL"
          ,cex.category = 0.5
          ,plot.axis=FALSE
          ,estimate.box.width=c(3, 1),
